@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "24614197256",
+    "project_id": "aztravel-20616",
+    "storage_bucket": "aztravel-20616.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:24614197256:android:c62d328756976543b159bd",
+        "android_client_info": {
+          "package_name": "com.example.az_travel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "24614197256-jkmvarcgj3fv5vuehmjeo72l3qicval1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.az_travel",
+            "certificate_hash": "d98942da10bda556afc73ed65dc538b24cb93137"
+          }
+        },
+        {
+          "client_id": "24614197256-ptf5p70m7fmc8t2jqcrauil4g6jj80eg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1lkm_WQv3UXSzBLYBdrk0yGzFHjCCB7o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "24614197256-ptf5p70m7fmc8t2jqcrauil4g6jj80eg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "24614197256-hdmofnnhujk06i3vc88ocmkcufik8ci8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.azTravel"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
