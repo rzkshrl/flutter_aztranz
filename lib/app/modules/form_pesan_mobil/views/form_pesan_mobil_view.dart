@@ -1,5 +1,7 @@
 import 'package:az_travel/app/controller/auth_controller.dart';
 import 'package:az_travel/app/data/models/usermodel.dart';
+import 'package:az_travel/app/modules/payment/views/payment_view.dart';
+import 'package:az_travel/app/routes/app_pages.dart';
 import 'package:az_travel/app/theme/theme.dart';
 import 'package:az_travel/app/utils/loading.dart';
 import 'package:az_travel/app/utils/textfield.dart';
@@ -11,9 +13,11 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:sizer/sizer.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
+import '../../../controller/api_controller.dart';
 import '../../../data/models/datamobilmodel.dart';
 import '../../../theme/textstyle.dart';
 import '../../../utils/dialog.dart';
+import '../../payment/controllers/payment_controller.dart';
 import '../controllers/form_pesan_mobil_controller.dart';
 
 class FormPesanMobilView extends GetView<FormPesanMobilController> {
@@ -22,6 +26,8 @@ class FormPesanMobilView extends GetView<FormPesanMobilController> {
   Widget build(BuildContext context) {
     final authC = Get.put(AuthController());
     final c = Get.put(FormPesanMobilController());
+    var paymentC = Get.put(PaymentController());
+    var apiC = Get.put(APIController());
     final dataMobil = Get.arguments as DataMobilModel;
     final formatCurrency =
         NumberFormat.simpleCurrency(locale: 'id_ID', decimalDigits: 0);
@@ -254,7 +260,7 @@ class FormPesanMobilView extends GetView<FormPesanMobilController> {
                               ),
                               Center(
                                 child: InkWell(
-                                  onTap: () {
+                                  onTap: () async {
                                     c.hargaPerHariCalculated.value =
                                         c.dateRange.value == 0
                                             ? hargaPerHariIDR
@@ -269,15 +275,24 @@ class FormPesanMobilView extends GetView<FormPesanMobilController> {
                                             .validate() &&
                                         c.alamatFormPesanKey.value.currentState!
                                             .validate()) {
-                                      // c.pesanMobil(
-                                      //     dataMobil.id!,
-                                      //     c.hargaPerHariCalculated.value
-                                      //         .toString(),
-                                      //     dataMobil.namaMobil!,
-                                      //     c.namaLengkapFormPesanC.text,
-                                      //     c.noKtpFormPesanC.text,
-                                      //     c.noTelpFormPesanC.text,
-                                      //     c.alamatFormPesanC.text);
+                                      await c.pesanMobilAPI(
+                                          dataMobil.id!,
+                                          c.hargaPerHariCalculated.value
+                                              .toString(),
+                                          dataMobil.namaMobil!,
+                                          c.namaLengkapFormPesanC.text,
+                                          c.noKtpFormPesanC.text,
+                                          c.noTelpFormPesanC.text,
+                                          c.alamatFormPesanC.text);
+                                      await Future.delayed(
+                                          Duration(seconds: 3));
+                                      debugPrint(
+                                          'SNAP TOKEN di view pesan nih: ${apiC.snapToken}');
+                                      await Future.delayed(
+                                          Duration(seconds: 3));
+                                      await c.midtrans.startPaymentUiFlow(
+                                          token: apiC.snapToken);
+                                      // await Get.toNamed(Routes.PAYMENT);
                                     }
                                   },
                                   child: Container(

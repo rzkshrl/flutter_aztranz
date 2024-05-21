@@ -2,6 +2,7 @@ import 'package:az_travel/app/controller/api_controller.dart';
 import 'package:az_travel/app/routes/app_pages.dart';
 import 'package:az_travel/app/theme/theme.dart';
 import 'package:az_travel/app/utils/textfield.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -19,6 +20,9 @@ class DashboardUserView extends GetView<DashboardUserController> {
     final c = Get.put(DashboardUserController());
     final apiC = Get.put(APIController());
     apiC.getDataMobil();
+
+    var defaultImage =
+        "https://ui-avatars.com/api/?background=fff38a&color=5175c0&font-size=0.33&size=256";
 
     // add scrollcontroller to listen scroll activity for appbar
     final ScrollController scrollController = ScrollController();
@@ -196,6 +200,10 @@ class DashboardUserView extends GetView<DashboardUserController> {
                                       locale: 'id_ID', decimalDigits: 0);
                               int hargaPerHariIDR =
                                   int.parse(dataMobil.hargaPerHari!);
+
+                              var fotoMobilURL = dataMobil.fotoMobil!
+                                  .replaceRange(7, 21, '10.0.2.2:8000');
+
                               return AnimatedBuilder(
                                 animation: c.cAniDashboardCategories[index]!,
                                 builder: (context, child) {
@@ -254,7 +262,7 @@ class DashboardUserView extends GetView<DashboardUserController> {
                                                 topRight: Radius.circular(20),
                                               ),
                                               child: Image.network(
-                                                dataMobil.fotoMobil!,
+                                                fotoMobilURL,
                                                 fit: BoxFit.cover,
                                               ),
                                             ),

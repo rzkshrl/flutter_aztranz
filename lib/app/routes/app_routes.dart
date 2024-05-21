@@ -23,6 +23,7 @@ abstract class Routes {
   static const DETAIL_MOBIL = _Paths.DETAIL_MOBIL;
   static const DETAIL_PELANGGAN = _Paths.DETAIL_PELANGGAN;
   static const EDIT_PROFILE = _Paths.EDIT_PROFILE;
+  static const PAYMENT = _Paths.PAYMENT;
 }
 
 abstract class _Paths {
@@ -45,4 +46,5 @@ abstract class _Paths {
   static const DETAIL_MOBIL = '/detail-mobil';
   static const DETAIL_PELANGGAN = '/detail-pelanggan';
   static const EDIT_PROFILE = '/edit-profile';
+  static const PAYMENT = '/payment';
 }

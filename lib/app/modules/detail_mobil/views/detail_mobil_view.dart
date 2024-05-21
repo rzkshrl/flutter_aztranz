@@ -19,6 +19,8 @@ class DetailMobilView extends GetView<DetailMobilController> {
     final formatCurrency =
         NumberFormat.simpleCurrency(locale: 'id_ID', decimalDigits: 0);
     int hargaPerHariIDR = int.parse(dataMobil.hargaPerHari!);
+    var fotoMobilURL =
+        dataMobil.fotoMobil!.replaceRange(7, 21, '10.0.2.2:8000');
     return AnnotatedRegion(
       value: const SystemUiOverlayStyle(
         statusBarBrightness: Brightness.dark,
@@ -44,7 +46,7 @@ class DetailMobilView extends GetView<DetailMobilController> {
                     },
                     blendMode: BlendMode.dstOut,
                     child: Image.network(
-                      dataMobil.fotoMobil!,
+                      fotoMobilURL,
                       width: 100.w,
                       fit: BoxFit.contain,
                     ),

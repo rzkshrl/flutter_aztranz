@@ -10,7 +10,8 @@ package="com.example.atan_app">
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     
     <application
-        android:label="AZTravel"
+        
+    android:theme="@style/AppTheme"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

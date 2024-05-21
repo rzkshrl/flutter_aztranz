@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class DataMobilModel {
   int? id;
   String? namaMobil;
@@ -33,7 +31,7 @@ class DataMobilModel {
       tipeBahanBakar: json['bahan_bakar'],
       tahun: json['tahun'],
       deskripsi: json['deskripsi'],
-      fotoMobil: json['foto_mobil'],
+      fotoMobil: json['foto_url'],
     );
   }
 }

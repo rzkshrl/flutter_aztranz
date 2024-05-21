@@ -1,12 +1,15 @@
 // ignore_for_file: unnecessary_overrides
 
+import 'package:az_travel/app/controller/api_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:midtrans_sdk/midtrans_sdk.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart' as dot_env;
 
 class FormPesanMobilController extends GetxController {
   TextEditingController namaLengkapFormPesanC = TextEditingController();
@@ -51,6 +54,59 @@ class FormPesanMobilController extends GetxController {
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
+  var apiC = Get.put(APIController());
+
+  Future<void> pesanMobilAPI(
+    int idMobil,
+    String harga,
+    String namaMobil,
+    String namaPemesan,
+    String noKTPPemesan,
+    String noTelpPemesan,
+    String alamatPemesan,
+  ) async {
+    try {
+      print('ID Mobil : $idMobil');
+      print('Harga Mobil Total : $harga');
+      if (datePesanEnd.value != "") {
+        apiC.postDataReservasi(
+            idMobil,
+            namaMobil,
+            namaPemesan,
+            alamatPemesan,
+            harga,
+            noKTPPemesan,
+            noTelpPemesan,
+            datePesanStart.value,
+            datePesanEnd.value);
+        Get.defaultDialog(
+          title: "Berhasil",
+          middleText: "Pesanan berhasil dikirim.",
+          textConfirm: 'Ya',
+          onConfirm: () {
+            Get.back();
+            Get.back();
+          },
+        );
+      } else {
+        Get.defaultDialog(
+          title: "Gagal",
+          middleText: "Lengkapi form",
+          textConfirm: 'Ya',
+          onConfirm: () {
+            Get.back();
+            Get.back();
+          },
+        );
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      Get.snackbar("Error", "Pesanan tidak berhasil dikirim.");
+    }
+  }
+
   void pesanMobil(
     String idMobil,
     String harga,
@@ -91,6 +147,32 @@ class FormPesanMobilController extends GetxController {
       }
       Get.snackbar("Error", "Pesanan tidak berhasil dikirim.");
     }
+  }
+
+  var midtransClientKey = 'SB-Mid-client-v5tvPUprZj2vnXgJ';
+  var midtransSrc = 'https://app.sandbox.midtrans.com/snap/snap.js';
+
+  var midtrans = MidtransSDK();
+
+  void initSDK() async {
+    midtrans = await MidtransSDK.init(
+      config: MidtransConfig(
+        clientKey: dot_env.dotenv.env['MIDTRANS_CLIENT_KEY'] ?? "",
+        merchantBaseUrl: midtransSrc,
+        colorTheme: ColorTheme(
+          colorPrimary: Colors.blue,
+          colorPrimaryDark: Colors.blue,
+          colorSecondary: Colors.blue,
+        ),
+      ),
+    );
+    midtrans.setUIKitCustomSetting(
+      showPaymentStatus: true,
+      // skipCustomerDetailsPages: true,
+    );
+    midtrans.setTransactionFinishedCallback((result) {
+      Get.snackbar('Berhasil', "Transaksi Berhasil");
+    });
   }
 
   @override
