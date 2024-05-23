@@ -1,7 +1,5 @@
 import 'package:az_travel/app/controller/auth_controller.dart';
 import 'package:az_travel/app/data/models/usermodel.dart';
-import 'package:az_travel/app/modules/payment/views/payment_view.dart';
-import 'package:az_travel/app/routes/app_pages.dart';
 import 'package:az_travel/app/theme/theme.dart';
 import 'package:az_travel/app/utils/loading.dart';
 import 'package:az_travel/app/utils/textfield.dart';
@@ -26,7 +24,7 @@ class FormPesanMobilView extends GetView<FormPesanMobilController> {
   Widget build(BuildContext context) {
     final authC = Get.put(AuthController());
     final c = Get.put(FormPesanMobilController());
-    var paymentC = Get.put(PaymentController());
+    Get.put(PaymentController());
     var apiC = Get.put(APIController());
     final dataMobil = Get.arguments as DataMobilModel;
     final formatCurrency =
@@ -285,13 +283,14 @@ class FormPesanMobilView extends GetView<FormPesanMobilController> {
                                           c.noTelpFormPesanC.text,
                                           c.alamatFormPesanC.text);
                                       await Future.delayed(
-                                          Duration(seconds: 3));
+                                          const Duration(seconds: 2));
                                       debugPrint(
                                           'SNAP TOKEN di view pesan nih: ${apiC.snapToken}');
                                       await Future.delayed(
-                                          Duration(seconds: 3));
-                                      await c.midtrans.startPaymentUiFlow(
+                                          const Duration(seconds: 1));
+                                      await c.midtrans?.startPaymentUiFlow(
                                           token: apiC.snapToken);
+                                      // await c.testPayment();
                                       // await Get.toNamed(Routes.PAYMENT);
                                     }
                                   },

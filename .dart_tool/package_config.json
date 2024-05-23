@@ -326,6 +326,12 @@
       "languageVersion": "3.2"
     },
     {
+      "name": "fluttertoast",
+      "rootUri": "file:///Users/fullrex/.pub-cache/hosted/pub.dev/fluttertoast-8.2.5",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "form_field_validator",
       "rootUri": "file:///Users/fullrex/.pub-cache/hosted/pub.dev/form_field_validator-1.1.0",
       "packageUri": "lib/",
@@ -538,6 +544,12 @@
     {
       "name": "meta",
       "rootUri": "file:///Users/fullrex/.pub-cache/hosted/pub.dev/meta-1.11.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "midpay",
+      "rootUri": "file:///Users/fullrex/.pub-cache/hosted/pub.dev/midpay-1.1.7",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -824,7 +836,7 @@
       "languageVersion": "3.2"
     }
   ],
-  "generated": "2024-05-19T05:19:09.058695Z",
+  "generated": "2024-05-23T12:45:40.769793Z",
   "generator": "pub",
   "generatorVersion": "3.3.3"
 }

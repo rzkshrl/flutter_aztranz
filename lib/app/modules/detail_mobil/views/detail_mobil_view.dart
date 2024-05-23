@@ -130,7 +130,7 @@ class DetailMobilView extends GetView<DetailMobilController> {
                     ),
                     Row(
                       children: [
-                        Icon(PhosphorIconsBold.squareHalfBottom),
+                        const Icon(PhosphorIconsBold.squareHalfBottom),
                         SizedBox(
                           width: 2.w,
                         ),
@@ -145,7 +145,7 @@ class DetailMobilView extends GetView<DetailMobilController> {
                     ),
                     Row(
                       children: [
-                        Icon(PhosphorIconsBold.calendar),
+                        const Icon(PhosphorIconsBold.calendar),
                         SizedBox(
                           width: 2.w,
                         ),
@@ -160,7 +160,7 @@ class DetailMobilView extends GetView<DetailMobilController> {
                     ),
                     Row(
                       children: [
-                        Icon(PhosphorIconsBold.engine),
+                        const Icon(PhosphorIconsBold.engine),
                         SizedBox(
                           width: 2.w,
                         ),

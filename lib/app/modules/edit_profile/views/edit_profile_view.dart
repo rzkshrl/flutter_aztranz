@@ -1,9 +1,7 @@
 import 'dart:io';
 
 import 'package:az_travel/app/data/models/usermodel.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import 'package:get/get.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';

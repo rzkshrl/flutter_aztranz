@@ -1,8 +1,7 @@
-// ignore_for_file: unnecessary_overrides
-
-import 'dart:io';
+// ignore_for_file: unnecessary_overrides, unnecessary_brace_in_string_interps
 
 import 'package:az_travel/app/controller/api_controller.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:midtrans_sdk/midtrans_sdk.dart';
@@ -40,7 +39,9 @@ class PaymentController extends GetxController {
   void onInit() {
     super.onInit();
     initSDK();
-    print('SNAP TOKEN di payment: ${apiC.snapToken}');
+    if (kDebugMode) {
+      print('SNAP TOKEN di payment: ${apiC.snapToken}');
+    }
 
     webViewController = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)

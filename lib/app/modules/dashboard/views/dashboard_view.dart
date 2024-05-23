@@ -17,7 +17,7 @@ class DashboardView extends GetView<DashboardController> {
   @override
   Widget build(BuildContext context) {
     final c = Get.put(DashboardController());
-    final formDataMobilC = Get.put(FormMobilController());
+    Get.put(FormMobilController());
     return Scaffold(
       appBar: AppBar(
         title: Padding(

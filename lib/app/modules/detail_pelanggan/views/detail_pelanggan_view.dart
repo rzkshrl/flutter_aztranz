@@ -108,7 +108,7 @@ class DetailPelangganView extends GetView<DetailPelangganController> {
                   ),
                   Row(
                     children: [
-                      Icon(PhosphorIconsBold.engine),
+                      const Icon(PhosphorIconsBold.engine),
                       SizedBox(
                         width: 2.w,
                       ),
@@ -123,7 +123,7 @@ class DetailPelangganView extends GetView<DetailPelangganController> {
                   ),
                   Row(
                     children: [
-                      Icon(PhosphorIconsBold.squareHalfBottom),
+                      const Icon(PhosphorIconsBold.squareHalfBottom),
                       SizedBox(
                         width: 2.w,
                       ),
@@ -138,7 +138,7 @@ class DetailPelangganView extends GetView<DetailPelangganController> {
                   ),
                   Row(
                     children: [
-                      Icon(PhosphorIconsBold.calendar),
+                      const Icon(PhosphorIconsBold.calendar),
                       SizedBox(
                         width: 2.w,
                       ),

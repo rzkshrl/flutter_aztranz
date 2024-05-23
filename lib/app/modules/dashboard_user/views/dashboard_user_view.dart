@@ -2,7 +2,6 @@ import 'package:az_travel/app/controller/api_controller.dart';
 import 'package:az_travel/app/routes/app_pages.dart';
 import 'package:az_travel/app/theme/theme.dart';
 import 'package:az_travel/app/utils/textfield.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -20,9 +19,6 @@ class DashboardUserView extends GetView<DashboardUserController> {
     final c = Get.put(DashboardUserController());
     final apiC = Get.put(APIController());
     apiC.getDataMobil();
-
-    var defaultImage =
-        "https://ui-avatars.com/api/?background=fff38a&color=5175c0&font-size=0.33&size=256";
 
     // add scrollcontroller to listen scroll activity for appbar
     final ScrollController scrollController = ScrollController();

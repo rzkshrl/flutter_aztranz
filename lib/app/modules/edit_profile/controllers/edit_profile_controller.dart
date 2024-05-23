@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_overrides
+// ignore_for_file: unnecessary_overrides, use_build_context_synchronously
 
 import 'dart:io';
 

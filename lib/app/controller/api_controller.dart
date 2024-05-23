@@ -42,6 +42,21 @@ class APIController extends GetxController {
     return dataMobilList;
   }
 
+  var searchText = ''.obs;
+
+  List<DataMobilModel> get filteredUsers {
+    if (searchText.isEmpty) {
+      return dataMobilModel;
+    } else {
+      return dataMobilModel.where((data) {
+        return data.namaMobil!
+                .toLowerCase()
+                .contains(searchText.toLowerCase()) ||
+            data.merek!.toLowerCase().contains(searchText.toLowerCase());
+      }).toList();
+    }
+  }
+
   Future<void> postDataReservasi(
       int idMobil,
       String namaMobil,
@@ -63,7 +78,7 @@ class APIController extends GetxController {
         'gross_amount': 1,
         'alamat': alamat,
         'harga': harga,
-        'noktp': noKTP,
+        'no_ktp': noKTP,
         'telepon': telepon,
         'tanggalpesan_start': tanggalPesanStart,
         'tanggalpesan_end': tanggalPesanEnd,
@@ -82,7 +97,9 @@ class APIController extends GetxController {
         debugPrint('Pesanan terkirim ke server');
         snapToken = res.data['snap_token'];
 
-        print('SNAP TOKEN: $snapToken');
+        if (kDebugMode) {
+          print('SNAP TOKEN: $snapToken');
+        }
         isLoading.value = false;
       } else {
         Get.snackbar('Gagal', 'Terjadi kesalahan.');

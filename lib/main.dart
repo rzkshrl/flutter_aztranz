@@ -14,9 +14,11 @@ import 'app/modules/splash_screen/views/splash_screen_view.dart';
 import 'app/routes/app_pages.dart';
 import 'app/theme/textstyle.dart';
 import 'app/utils/dialog.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart' as dot_env;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dot_env.dotenv.load(fileName: ".env");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await initializeDateFormatting('id_ID', null)
       .then((value) => runApp(AZTravelApp()));
