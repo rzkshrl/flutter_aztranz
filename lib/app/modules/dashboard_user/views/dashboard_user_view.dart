@@ -77,7 +77,7 @@ class DashboardUserView extends GetView<DashboardUserController> {
                               validator: null,
                               isDatePicker: false,
                               onChanged: (value) {
-                                apiC.searchText.value = value;
+                                apiC.searchMobil(value);
                               },
                             ),
                             Row(
@@ -134,7 +134,7 @@ class DashboardUserView extends GetView<DashboardUserController> {
                               validator: null,
                               isDatePicker: false,
                               onChanged: (value) {
-                                apiC.searchText.value = value;
+                                apiC.searchMobil(value);
                               },
                             ),
                           ],
@@ -173,248 +173,214 @@ class DashboardUserView extends GetView<DashboardUserController> {
                   return Padding(
                     padding: EdgeInsets.only(left: 4.w, right: 4.w),
                     child: Obx(
-                      () => FutureBuilder(
-                          future: apiC.getDataMobil(),
-                          builder: (context, snap) {
-                            if (!snap.hasData) {
-                              return const LoadingView();
-                            }
-                            final dataMobilList = snap.data!;
-                            var filteredDataMobilList =
-                                apiC.filteredData(dataMobilList);
-                            return GridView.builder(
-                              shrinkWrap: true,
-                              itemCount:
-                                  // apiC.searchText.value != '' ?
-                                  filteredDataMobilList.length
-                              // : apiC.filteredUsers.length
-                              ,
-                              physics: const BouncingScrollPhysics(),
-                              padding: EdgeInsets.only(bottom: 0.1.h),
-                              gridDelegate:
-                                  const SliverGridDelegateWithMaxCrossAxisExtent(
-                                      maxCrossAxisExtent: 250,
-                                      childAspectRatio: 0.60,
-                                      crossAxisSpacing: 0,
-                                      mainAxisSpacing: 0),
-                              itemBuilder: (context, index) {
-                                // initiate animation and duration for animation each index
-                                if (c.cAniDashboardCategories[index] == null) {
-                                  c.cAniDashboardCategories[index] =
-                                      AnimationController(
-                                    vsync: c,
-                                    duration: const Duration(milliseconds: 70),
-                                  );
-                                  c.isItemClicked[index] = false;
-                                }
+                      () => GridView.builder(
+                        shrinkWrap: true,
+                        itemCount: apiC.filteredDataMobil.length,
+                        physics: const BouncingScrollPhysics(),
+                        padding: EdgeInsets.only(bottom: 0.1.h),
+                        gridDelegate:
+                            const SliverGridDelegateWithMaxCrossAxisExtent(
+                                maxCrossAxisExtent: 250,
+                                childAspectRatio: 0.60,
+                                crossAxisSpacing: 0,
+                                mainAxisSpacing: 0),
+                        itemBuilder: (context, index) {
+                          // initiate animation and duration for animation each index
+                          if (c.cAniDashboardCategories[index] == null) {
+                            c.cAniDashboardCategories[index] =
+                                AnimationController(
+                              vsync: c,
+                              duration: const Duration(milliseconds: 70),
+                            );
+                            c.isItemClicked[index] = false;
+                          }
 
-                                var dataMobil =
-                                    // apiC.searchText.value != '' ?
-                                    filteredDataMobilList[index]
-                                    // : apiC.filteredUsers[index]
-                                    ;
-                                final formatCurrency =
-                                    NumberFormat.simpleCurrency(
-                                        locale: 'id_ID', decimalDigits: 0);
-                                int hargaPerHariIDR =
-                                    int.parse(dataMobil.hargaPerHari!);
+                          var dataMobil = apiC.filteredDataMobil[index];
+                          final formatCurrency = NumberFormat.simpleCurrency(
+                              locale: 'id_ID', decimalDigits: 0);
+                          int hargaPerHariIDR =
+                              int.parse(dataMobil.hargaPerHari!);
 
-                                var fotoMobilURL = dataMobil.fotoMobil!
-                                    .replaceRange(7, 21, '10.0.2.2:8000');
+                          var fotoMobilURL = dataMobil.fotoMobil!
+                              .replaceRange(7, 21, '10.0.2.2:8000');
 
-                                return AnimatedBuilder(
-                                  animation: c.cAniDashboardCategories[index]!,
-                                  builder: (context, child) {
-                                    return ScaleTransition(
-                                      scale: Tween(begin: 1.0, end: 0.95)
-                                          .animate(c
-                                              .cAniDashboardCategories[index]!),
-                                      child: child,
-                                    );
+                          return AnimatedBuilder(
+                            animation: c.cAniDashboardCategories[index]!,
+                            builder: (context, child) {
+                              return ScaleTransition(
+                                scale: Tween(begin: 1.0, end: 0.95)
+                                    .animate(c.cAniDashboardCategories[index]!),
+                                child: child,
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 4.0, left: 4, right: 4, bottom: 4),
+                              child: GestureDetector(
+                                onLongPressDown: (details) {
+                                  c.cAniDashboardCategories[index]!.forward();
+                                },
+                                onLongPressEnd: (details) async {
+                                  await c.cAniDashboardCategories[index]!
+                                      .reverse();
+                                  await Get.toNamed(Routes.DETAIL_MOBIL,
+                                      arguments: dataMobil);
+                                },
+                                child: InkWell(
+                                  highlightColor: Colors.transparent,
+                                  splashColor: Colors.transparent,
+                                  splashFactory: NoSplash.splashFactory,
+                                  onTap: () {
+                                    c.cAniDashboardCategories[index]!.forward();
+                                    Future.delayed(
+                                        const Duration(milliseconds: 70), () {
+                                      c.cAniDashboardCategories[index]!
+                                          .reverse();
+                                    });
+                                    Get.toNamed(Routes.DETAIL_MOBIL,
+                                        arguments: dataMobil);
                                   },
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 4.0, left: 4, right: 4, bottom: 4),
-                                    child: GestureDetector(
-                                      onLongPressDown: (details) {
-                                        c.cAniDashboardCategories[index]!
-                                            .forward();
-                                      },
-                                      onLongPressEnd: (details) async {
-                                        await c.cAniDashboardCategories[index]!
-                                            .reverse();
-                                        await Get.toNamed(Routes.DETAIL_MOBIL,
-                                            arguments: dataMobil);
-                                      },
-                                      child: InkWell(
-                                        highlightColor: Colors.transparent,
-                                        splashColor: Colors.transparent,
-                                        splashFactory: NoSplash.splashFactory,
-                                        onTap: () {
-                                          c.cAniDashboardCategories[index]!
-                                              .forward();
-                                          Future.delayed(
-                                              const Duration(milliseconds: 70),
-                                              () {
-                                            c.cAniDashboardCategories[index]!
-                                                .reverse();
-                                          });
-                                          Get.toNamed(Routes.DETAIL_MOBIL,
-                                              arguments: dataMobil);
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: black.withOpacity(0.2),
-                                            borderRadius:
-                                                BorderRadius.circular(20),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: black.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(20),
+                                            topRight: Radius.circular(20),
                                           ),
-                                          child: Column(
+                                          child: Center(
+                                            child: Image.network(
+                                              fotoMobilURL,
+                                              fit: BoxFit.cover,
+                                              width: 50.w,
+                                              height: 22.h,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 1.5.h,
+                                              left: 3.w,
+                                              right: 3.w),
+                                          child: Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
-                                              ClipRRect(
-                                                borderRadius:
-                                                    const BorderRadius.only(
-                                                  topLeft: Radius.circular(20),
-                                                  topRight: Radius.circular(20),
-                                                ),
-                                                child: Center(
-                                                  child: Image.network(
-                                                    fotoMobilURL,
-                                                    fit: BoxFit.cover,
-                                                    width: 50.w,
-                                                    height: 22.h,
+                                              Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    dataMobil.namaMobil!,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .titleMedium!
+                                                        .copyWith(
+                                                          fontSize: 12.sp,
+                                                          height: 1,
+                                                        ),
                                                   ),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 1.5.h,
-                                                    left: 3.w,
-                                                    right: 3.w),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          dataMobil.namaMobil!,
-                                                          style:
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .titleMedium!
-                                                                  .copyWith(
-                                                                    fontSize:
-                                                                        12.sp,
-                                                                    height: 1,
-                                                                  ),
+                                                  SizedBox(
+                                                    height: 0.5.h,
+                                                  ),
+                                                  Text(
+                                                    dataMobil.merek!,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .displayMedium!
+                                                        .copyWith(
+                                                          fontSize: 9.sp,
+                                                          height: 1,
                                                         ),
-                                                        SizedBox(
-                                                          height: 0.5.h,
+                                                  ),
+                                                  SizedBox(
+                                                    height: 0.5.h,
+                                                  ),
+                                                  Text(
+                                                    '${formatCurrency.format(hargaPerHariIDR)}/hari',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .displayMedium!
+                                                        .copyWith(
+                                                          fontSize: 10.sp,
+                                                          height: 1,
                                                         ),
-                                                        Text(
-                                                          dataMobil.merek!,
-                                                          style: Theme.of(
-                                                                  context)
-                                                              .textTheme
-                                                              .displayMedium!
-                                                              .copyWith(
-                                                                fontSize: 9.sp,
-                                                                height: 1,
-                                                              ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 0.5.h,
-                                                        ),
-                                                        Text(
-                                                          '${formatCurrency.format(hargaPerHariIDR)}/hari',
-                                                          style: Theme.of(
-                                                                  context)
-                                                              .textTheme
-                                                              .displayMedium!
-                                                              .copyWith(
-                                                                fontSize: 10.sp,
-                                                                height: 1,
-                                                              ),
-                                                        ),
+                                                  ),
 
-                                                        // Text(
-                                                        //   dataMobil.hargaPerHari!,
-                                                        //   style: Theme.of(context)
-                                                        //       .textTheme
-                                                        //       .displayMedium!
-                                                        //       .copyWith(
-                                                        //         fontSize: 10.sp,
-                                                        //         height: 1,
-                                                        //       ),
-                                                        // ),
-                                                        SizedBox(
-                                                          height: 0.7.h,
+                                                  // Text(
+                                                  //   dataMobil.hargaPerHari!,
+                                                  //   style: Theme.of(context)
+                                                  //       .textTheme
+                                                  //       .displayMedium!
+                                                  //       .copyWith(
+                                                  //         fontSize: 10.sp,
+                                                  //         height: 1,
+                                                  //       ),
+                                                  // ),
+                                                  SizedBox(
+                                                    height: 0.7.h,
+                                                  ),
+                                                  Text(
+                                                    'Tahun ${dataMobil.tahun!}',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .displayMedium!
+                                                        .copyWith(
+                                                          fontSize: 9.sp,
+                                                          height: 1,
                                                         ),
-                                                        Text(
-                                                          'Tahun ${dataMobil.tahun!}',
-                                                          style: Theme.of(
-                                                                  context)
-                                                              .textTheme
-                                                              .displayMedium!
-                                                              .copyWith(
-                                                                fontSize: 9.sp,
-                                                                height: 1,
-                                                              ),
-                                                        ),
-                                                      ],
+                                                  ),
+                                                ],
+                                              ),
+                                              InkWell(
+                                                onTap: () {
+                                                  c.cAniDashboardCategories[
+                                                          index]!
+                                                      .forward();
+                                                  Future.delayed(
+                                                      const Duration(
+                                                          milliseconds: 70),
+                                                      () {
+                                                    c.cAniDashboardCategories[
+                                                            index]!
+                                                        .reverse();
+                                                  });
+                                                  Get.toNamed(
+                                                      Routes.DETAIL_MOBIL,
+                                                      arguments: dataMobil);
+                                                },
+                                                child: Row(
+                                                  children: [
+                                                    Icon(
+                                                      PhosphorIconsLight
+                                                          .caretRight,
+                                                      size: 6.w,
                                                     ),
-                                                    InkWell(
-                                                      onTap: () {
-                                                        c.cAniDashboardCategories[
-                                                                index]!
-                                                            .forward();
-                                                        Future.delayed(
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    70), () {
-                                                          c.cAniDashboardCategories[
-                                                                  index]!
-                                                              .reverse();
-                                                        });
-                                                        Get.toNamed(
-                                                            Routes.DETAIL_MOBIL,
-                                                            arguments:
-                                                                dataMobil);
-                                                      },
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(
-                                                            PhosphorIconsLight
-                                                                .caretRight,
-                                                            size: 6.w,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    )
                                                   ],
                                                 ),
                                               )
                                             ],
                                           ),
-                                        ),
-                                      ),
+                                        )
+                                      ],
                                     ),
                                   ),
-                                );
-                              },
-                            );
-                          }),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   );
                 },

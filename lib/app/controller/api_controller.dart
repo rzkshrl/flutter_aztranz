@@ -12,6 +12,7 @@ class APIController extends GetxController {
   final dio = Dio(BaseOptions(headers: {"Access-Control-Allow-Origin": "*"}));
 
   var dataMobilModel = <DataMobilModel>[].obs;
+  var filteredDataMobil = <DataMobilModel>[].obs;
 
   var isLoading = false.obs;
 
@@ -19,10 +20,10 @@ class APIController extends GetxController {
 
   var searchText = ''.obs;
 
-  Future<List<DataMobilModel>> getDataMobil() async {
+  Future<void> getDataMobil() async {
     try {
+      isLoading.value = true;
       dataMobilModel.clear();
-      // await Future.delayed(const Duration(seconds: 2));
       String url = 'http://10.0.2.2:8000/api/mobil/';
 
       var res = await dio.get(url);
@@ -35,10 +36,11 @@ class APIController extends GetxController {
         var dataMobil = List.from(res.data['data'] as List)
             .map((e) => DataMobilModel.fromJson(e))
             .toList();
-        return dataMobil;
+        dataMobilModel.assignAll(dataMobil);
+        filteredDataMobil.assignAll(dataMobil);
+        isLoading.value = false;
       } else {
         Get.snackbar('Gagal', 'Terjadi kesalahan.');
-        throw Exception('Failed to load data');
       }
     } catch (e) {
       if (kDebugMode) {
@@ -49,24 +51,17 @@ class APIController extends GetxController {
     }
   }
 
-  // List<DataMobilModel> filteredData(List<DataMobilModel> dataMobil) {
-  //   if (searchText.isEmpty) {
-  //     return dataMobil;
-  //   } else {
-  //     return dataMobil.where((data) {
-  //       return data.namaMobil!.toLowerCase().contains(searchText.toLowerCase());
-  //     }).toList();
-  //   }
-  // }
-
-  List<DataMobilModel> filteredData(List<DataMobilModel> dataMobil) {
-    if (searchText.isEmpty) {
-      return dataMobil;
+  void searchMobil(String query) {
+    searchText.value = query;
+    if (query.isEmpty) {
+      filteredDataMobil.assignAll(dataMobilModel);
     } else {
-      return dataMobil
-          .where((data) =>
-              data.namaMobil!.toLowerCase().contains(searchText.toLowerCase()))
-          .toList();
+      filteredDataMobil.assignAll(
+        dataMobilModel
+            .where((mobil) =>
+                mobil.namaMobil!.toLowerCase().contains(query.toLowerCase()))
+            .toList(),
+      );
     }
   }
 

@@ -41,11 +41,13 @@ class DashboardUserController extends GetxController
   var searchFormKey2 = GlobalKey<FormState>().obs;
 
   final authC = Get.put(AuthController());
+  final apiC = Get.put(APIController());
 
   @override
   void onInit() {
     super.onInit();
     authC.readUser();
+    apiC.getDataMobil();
     // apiC.getDataMobil();
     // firestoreDataMobilList = firestore.collection('DataMobil').snapshots().map(
     //     (querySnapshot) => querySnapshot.docs

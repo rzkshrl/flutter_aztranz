@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_overrides, avoid_print
 
 import 'package:az_travel/app/controller/api_controller.dart';
+import 'package:az_travel/app/routes/app_pages.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -181,6 +182,10 @@ class FormPesanMobilController extends GetxController {
     );
     midtrans!.setTransactionFinishedCallback((result) {
       _showToast('Transaction Completed', false);
+      Get.back();
+      Get.back();
+      Get.back();
+      Get.back();
     });
   }
 
@@ -193,33 +198,6 @@ class FormPesanMobilController extends GetxController {
         backgroundColor: isError ? Colors.red : Colors.green,
         textColor: Colors.white,
         fontSize: 16.0);
-  }
-
-  final midpay = Midpay();
-
-  //test payment
-  testPayment() {
-    //for android auto sandbox when debug and production when release
-    midpay.init(midtransClientKey, midtransSrc,
-        environment: Environment.sandbox);
-    midpay.setFinishCallback(_callback);
-    var midtransCustomer = MidtransCustomer(
-        'Zaki', 'Mubarok', 'kakzaki@gmail.com', '085704703691');
-    List<MidtransItem> listitems = [];
-    var midtransItems = MidtransItem('IDXXX', 50000, 2, 'Charger');
-    listitems.add(midtransItems);
-    var midtransTransaction = MidtransTransaction(
-        100000, midtransCustomer, listitems,
-        skipCustomer: true);
-    midpay
-        .makePayment(midtransTransaction)
-        .catchError((err) => print("ERROR $err"));
-  }
-
-  //calback
-  Future<void> _callback(TransactionFinished finished) async {
-    print("Finish $finished");
-    return Future.value(null);
   }
 
   @override

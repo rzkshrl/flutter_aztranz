@@ -264,6 +264,7 @@ class FormPesanMobilView extends GetView<FormPesanMobilController> {
                                             ? hargaPerHariIDR
                                             : hargaPerHariIDR *
                                                 c.dateRange.value;
+                                    Get.dialog(dialogLoading());
                                     if (c.namaLengkapFormPesanKey.value
                                             .currentState!
                                             .validate() &&
@@ -282,12 +283,10 @@ class FormPesanMobilView extends GetView<FormPesanMobilController> {
                                           c.noKtpFormPesanC.text,
                                           c.noTelpFormPesanC.text,
                                           c.alamatFormPesanC.text);
+
                                       await Future.delayed(
-                                          const Duration(seconds: 2));
-                                      debugPrint(
-                                          'SNAP TOKEN di view pesan nih: ${apiC.snapToken}');
-                                      await Future.delayed(
-                                          const Duration(seconds: 1));
+                                          const Duration(seconds: 3));
+
                                       await c.midtrans?.startPaymentUiFlow(
                                           token: apiC.snapToken);
                                       // await c.testPayment();
