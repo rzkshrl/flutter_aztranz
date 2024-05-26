@@ -332,7 +332,8 @@ Widget formInput(
     required bool isDatePicker,
     void Function()? onPressedDatePicker,
     List<TextInputFormatter>? inputFormatters,
-    int? maxLength}) {
+    int? maxLength,
+    void Function(String)? onChanged}) {
   FocusScopeNode currentFocus = FocusScope.of(Get.context!);
   return Form(
     key: key,
@@ -350,6 +351,7 @@ Widget formInput(
           //   currentFocus.unfocus();
           // }
         },
+        onChanged: onChanged,
         readOnly: readOnly ?? false,
         onTapOutside: (event) {
           if (!currentFocus.hasPrimaryFocus) {

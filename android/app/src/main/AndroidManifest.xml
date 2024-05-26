@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-package="com.example.atan_app">
+package="com.example.atan_app"
+xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -10,7 +11,8 @@ package="com.example.atan_app">
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     
     <application
-        
+        android:label="AZTravel"
+        tools:replace="android:label"
     android:theme="@style/AppTheme"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">

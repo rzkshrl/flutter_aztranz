@@ -1,12 +1,15 @@
 // ignore_for_file: invalid_use_of_protected_member
 
+import 'dart:convert';
+
 import 'package:az_travel/app/data/models/datamobilmodel.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 class APIController extends GetxController {
-  final dio = Dio();
+  final dio = Dio(BaseOptions(headers: {"Access-Control-Allow-Origin": "*"}));
 
   var dataMobilModel = <DataMobilModel>[].obs;
 
@@ -14,46 +17,56 @@ class APIController extends GetxController {
 
   var snapToken = '';
 
+  var searchText = ''.obs;
+
   Future<List<DataMobilModel>> getDataMobil() async {
     try {
-      isLoading.value = true;
       dataMobilModel.clear();
-      Future.delayed(const Duration(seconds: 2));
-      String url = 'http://10.0.2.2:8000/api/mobil';
+      // await Future.delayed(const Duration(seconds: 2));
+      String url = 'http://10.0.2.2:8000/api/mobil/';
 
       var res = await dio.get(url);
 
-      if (res.data['message'] == 'succes') {
-        dataMobilModel.value = List.from(res.data['data'] as List)
+      if (kDebugMode) {
+        print(res.data);
+      }
+
+      if (res.statusCode == 200) {
+        var dataMobil = List.from(res.data['data'] as List)
             .map((e) => DataMobilModel.fromJson(e))
             .toList();
-
-        isLoading.value = false;
+        return dataMobil;
       } else {
         Get.snackbar('Gagal', 'Terjadi kesalahan.');
+        throw Exception('Failed to load data');
       }
     } catch (e) {
       if (kDebugMode) {
         debugPrint('$e');
         Get.snackbar('Gagal', 'Terjadi kesalahan.');
       }
+      throw Exception('Failed to load data');
     }
-    List<DataMobilModel> dataMobilList = dataMobilModel.value;
-    return dataMobilList;
   }
 
-  var searchText = ''.obs;
+  // List<DataMobilModel> filteredData(List<DataMobilModel> dataMobil) {
+  //   if (searchText.isEmpty) {
+  //     return dataMobil;
+  //   } else {
+  //     return dataMobil.where((data) {
+  //       return data.namaMobil!.toLowerCase().contains(searchText.toLowerCase());
+  //     }).toList();
+  //   }
+  // }
 
-  List<DataMobilModel> get filteredUsers {
+  List<DataMobilModel> filteredData(List<DataMobilModel> dataMobil) {
     if (searchText.isEmpty) {
-      return dataMobilModel;
+      return dataMobil;
     } else {
-      return dataMobilModel.where((data) {
-        return data.namaMobil!
-                .toLowerCase()
-                .contains(searchText.toLowerCase()) ||
-            data.merek!.toLowerCase().contains(searchText.toLowerCase());
-      }).toList();
+      return dataMobil
+          .where((data) =>
+              data.namaMobil!.toLowerCase().contains(searchText.toLowerCase()))
+          .toList();
     }
   }
 
@@ -70,7 +83,7 @@ class APIController extends GetxController {
     try {
       isLoading.value = true;
 
-      String url = 'http://10.0.2.2:8000/api/reservasi/store';
+      String url = 'http://10.0.2.2:8000/api/reservasi/store/';
       var data = {
         'mobil_id': idMobil,
         'nama_mobil': namaMobil,

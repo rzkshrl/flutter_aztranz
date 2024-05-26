@@ -21,3 +21,8 @@ class LoadingView extends StatelessWidget {
 Future<void> simulateDelay() async {
   await Future.delayed(const Duration(milliseconds: 1500));
 }
+
+Widget loading() {
+  return Center(
+      child: Lottie.asset('assets/lottie/loading_aztravel.json', height: 135));
+}

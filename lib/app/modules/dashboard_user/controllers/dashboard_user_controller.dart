@@ -1,9 +1,11 @@
 // ignore_for_file: unnecessary_overrides
 
+import 'package:az_travel/app/controller/auth_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../controller/api_controller.dart';
 import '../../../data/models/datamobilmodel.dart';
 
 class DashboardUserController extends GetxController
@@ -38,9 +40,13 @@ class DashboardUserController extends GetxController
   var searchFormKey = GlobalKey<FormState>().obs;
   var searchFormKey2 = GlobalKey<FormState>().obs;
 
+  final authC = Get.put(AuthController());
+
   @override
   void onInit() {
     super.onInit();
+    authC.readUser();
+    // apiC.getDataMobil();
     // firestoreDataMobilList = firestore.collection('DataMobil').snapshots().map(
     //     (querySnapshot) => querySnapshot.docs
     //         .map(
