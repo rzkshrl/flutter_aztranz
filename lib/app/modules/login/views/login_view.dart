@@ -1,5 +1,6 @@
 import 'package:az_travel/app/controller/auth_controller.dart';
 import 'package:az_travel/app/routes/app_pages.dart';
+import 'package:az_travel/app/utils/button.dart';
 import 'package:az_travel/app/utils/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -94,8 +95,33 @@ class LoginView extends GetView<LoginController> {
                               SizedBox(
                                 height: 0.3.h,
                               ),
-                              InkWell(
+                              buttonNoIcon(
                                 onTap: () {
+                                  controller.cAniEmailLogin.forward();
+                                  Future.delayed(
+                                      const Duration(milliseconds: 70), () {
+                                    controller.cAniEmailLogin.reverse();
+                                  });
+                                  Future.delayed(
+                                          const Duration(milliseconds: 120))
+                                      .then((value) {
+                                    if (controller
+                                            .emailLoginKey.value.currentState!
+                                            .validate() &&
+                                        controller
+                                            .passLoginKey.value.currentState!
+                                            .validate()) {
+                                      authC.login(
+                                        controller.emailC.text,
+                                        controller.passC.text,
+                                      );
+                                    }
+                                  });
+                                },
+                                animationController: controller.cAniEmailLogin,
+                                onLongPressEnd: (details) async {
+                                  await controller.cAniEmailLogin.forward();
+                                  await controller.cAniEmailLogin.reverse();
                                   if (controller
                                           .emailLoginKey.value.currentState!
                                           .validate() &&
@@ -108,25 +134,10 @@ class LoginView extends GetView<LoginController> {
                                     );
                                   }
                                 },
-                                child: Container(
-                                  width: 75.w,
-                                  height: 6.h,
-                                  decoration: BoxDecoration(
-                                    color: yellow1_F9B401,
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  child: Padding(
-                                    padding:
-                                        EdgeInsets.only(right: 5.w, left: 5.w),
-                                    child: const Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text('Masuk'),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                                elevation: 0,
+                                btnColor: yellow1_F9B401,
+                                text: 'Masuk',
+                                textColor: black,
                               ),
                               SizedBox(
                                 height: 2.h,
@@ -135,37 +146,31 @@ class LoginView extends GetView<LoginController> {
                               SizedBox(
                                 height: 2.h,
                               ),
-                              InkWell(
+                              buttonWithIcon(
                                 onTap: () {
-                                  authC.signInGoogle();
+                                  controller.cAniGoogleLogin.forward();
+                                  Future.delayed(
+                                      const Duration(milliseconds: 70), () {
+                                    controller.cAniGoogleLogin.reverse();
+                                  });
+                                  Future.delayed(
+                                          const Duration(milliseconds: 120))
+                                      .then((value) {
+                                    authC.signInGoogle();
+                                  });
                                 },
-                                child: Container(
-                                  width: 75.w,
-                                  height: 6.h,
-                                  decoration: BoxDecoration(
-                                      color: light,
-                                      borderRadius: BorderRadius.circular(25),
-                                      boxShadow: [
-                                        BoxShadow(
-                                            color: dark,
-                                            offset: const Offset(0, 1))
-                                      ]),
-                                  child: Padding(
-                                    padding:
-                                        EdgeInsets.only(right: 5.w, left: 5.w),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        const Text('Masuk dengan Google'),
-                                        SvgPicture.asset(
-                                          'assets/images/google_logo.svg',
-                                          width: 5.w,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                                animationController: controller.cAniGoogleLogin,
+                                onLongPressEnd: (details) async {
+                                  await controller.cAniGoogleLogin.forward();
+                                  await controller.cAniGoogleLogin.reverse();
+                                  await authC.signInGoogle();
+                                },
+                                elevation: 3,
+                                btnColor: light,
+                                icon: SvgPicture.asset(
+                                    'assets/images/google_logo.svg'),
+                                text: 'Masuk dengan Google',
+                                textColor: black,
                               ),
                               SizedBox(
                                 height: 4.h,

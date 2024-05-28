@@ -1,12 +1,9 @@
 // ignore_for_file: invalid_use_of_protected_member
 
-import 'dart:convert';
-
 import 'package:az_travel/app/data/models/datamobilmodel.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 
 class APIController extends GetxController {
   final dio = Dio(BaseOptions(headers: {"Access-Control-Allow-Origin": "*"}));

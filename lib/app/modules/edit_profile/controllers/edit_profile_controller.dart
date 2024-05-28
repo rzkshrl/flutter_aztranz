@@ -13,12 +13,14 @@ import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:sizer/sizer.dart';
 
 import '../../../theme/textstyle.dart';
 import '../../../theme/theme.dart';
 import '../../../utils/dialog.dart';
 
-class EditProfileController extends GetxController {
+class EditProfileController extends GetxController
+    with GetTickerProviderStateMixin {
   TextEditingController usernameEditProfileC = TextEditingController();
   var usernameEditProfileKey = GlobalKey<FormState>().obs;
   TextEditingController namaLengkapEditProfileC = TextEditingController();
@@ -141,26 +143,55 @@ class EditProfileController extends GetxController {
         });
       }
 
-      Get.defaultDialog(
-        title: "Berhasil",
-        middleText: "Data berhasil diubah.",
-        textConfirm: 'Ya',
-        onConfirm: () {
-          Get.back();
-          Get.back();
-        },
+      Get.dialog(
+        dialogAlertBtn(
+          onPressed: () async {
+            Get.back();
+            Get.back();
+          },
+          animationLink: 'assets/lottie/finish_aztravel.json',
+          widthBtn: 26.w,
+          textBtn: "OK",
+          text: "Berhasil!",
+          textSub: "Data berhasil diubah.",
+          textAlert: getTextAlert(context),
+          textAlertSub: getTextAlertSub(context),
+          textAlertBtn: getTextAlertBtn(context),
+        ),
       );
     } catch (e) {
       if (kDebugMode) {
         print(e);
       }
-      Get.snackbar("Error", "Data tidak berhasil ditambahkan.");
+      Get.dialog(
+        dialogAlertOnly(
+          animationLink: 'assets/lottie/warning_aztravel.json',
+          text: "Terjadi Kesalahan!",
+          textSub: "Data gagal diubah.",
+          textAlert: getTextAlert(Get.context!),
+          textAlertSub: getTextAlertSub(Get.context!),
+        ),
+      );
     }
   }
+
+  late final AnimationController cAniUbahGambar;
+  bool isUbahGambar = false;
+
+  late final AnimationController cAniSimpan;
+  bool isSimpan = false;
 
   @override
   void onInit() {
     super.onInit();
+    cAniUbahGambar = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 70),
+    );
+    cAniSimpan = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 70),
+    );
   }
 
   @override

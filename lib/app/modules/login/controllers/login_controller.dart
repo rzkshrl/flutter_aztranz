@@ -4,7 +4,13 @@ import 'package:flutter/widgets.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/get.dart';
 
-class LoginController extends GetxController {
+class LoginController extends GetxController with GetTickerProviderStateMixin {
+  late final AnimationController cAniEmailLogin;
+  bool isEmailLoginClicked = false;
+
+  late final AnimationController cAniGoogleLogin;
+  bool isGoogleLoginClicked = false;
+
   TextEditingController emailC = TextEditingController();
   var emailLoginKey = GlobalKey<FormState>().obs;
   TextEditingController passC = TextEditingController();
@@ -24,6 +30,14 @@ class LoginController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    cAniEmailLogin = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 70),
+    );
+    cAniGoogleLogin = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 70),
+    );
   }
 
   @override

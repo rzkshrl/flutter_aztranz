@@ -9,6 +9,7 @@ import 'package:sizer/sizer.dart';
 
 import '../../../controller/auth_controller.dart';
 import '../../../theme/theme.dart';
+import '../../../utils/button.dart';
 import '../../../utils/loading.dart';
 import '../../../utils/textfield.dart';
 import '../controllers/edit_profile_controller.dart';
@@ -70,36 +71,35 @@ class EditProfileView extends GetView<EditProfileController> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                InkWell(
+                                buttonWithIcon(
                                   onTap: () {
+                                    controller.cAniUbahGambar.forward();
+                                    Future.delayed(
+                                        const Duration(milliseconds: 70), () {
+                                      controller.cAniUbahGambar.reverse();
+                                    });
+                                    Future.delayed(
+                                            const Duration(milliseconds: 120))
+                                        .then((value) {
+                                      controller.pickImage();
+                                    });
+                                  },
+                                  animationController:
+                                      controller.cAniUbahGambar,
+                                  onLongPressEnd: (details) async {
+                                    await controller.cAniUbahGambar.forward();
+                                    await controller.cAniUbahGambar.reverse();
                                     controller.pickImage();
                                   },
-                                  child: Container(
-                                    width: 40.w,
-                                    height: 5.h,
-                                    decoration: BoxDecoration(
-                                      color: yellow1_F9B401,
-                                      borderRadius: BorderRadius.circular(25),
-                                    ),
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                          right: 5.w, left: 5.w),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          const Text('Ubah gambar'),
-                                          Icon(
-                                            PhosphorIconsBold.camera,
-                                            size: 25,
-                                            color: Theme.of(Get.context!)
-                                                .iconTheme
-                                                .color,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                                  elevation: 0,
+                                  btnColor: yellow1_F9B401,
+                                  icon: Icon(
+                                    PhosphorIconsBold.camera,
+                                    size: 6.w,
                                   ),
+                                  width: 40.w,
+                                  text: 'Ubah Gambar',
+                                  textColor: black,
                                 ),
                                 SizedBox(
                                   height: 2.5.h,
@@ -184,8 +184,47 @@ class EditProfileView extends GetView<EditProfileController> {
                                 SizedBox(
                                   height: 4.h,
                                 ),
-                                InkWell(
+                                buttonWithIcon(
                                   onTap: () {
+                                    controller.cAniUbahGambar.forward();
+                                    Future.delayed(
+                                        const Duration(milliseconds: 70), () {
+                                      controller.cAniUbahGambar.reverse();
+                                    });
+                                    Future.delayed(
+                                            const Duration(milliseconds: 120))
+                                        .then((value) {
+                                      if (controller.usernameEditProfileKey
+                                              .value.currentState!
+                                              .validate() &&
+                                          controller.namaLengkapEditProfileKey
+                                              .value.currentState!
+                                              .validate() &&
+                                          controller.noKtpEditProfileKey.value
+                                              .currentState!
+                                              .validate() &&
+                                          controller.noTelpEditProfileKey.value
+                                              .currentState!
+                                              .validate() &&
+                                          controller.alamatEditProfileKey.value
+                                              .currentState!
+                                              .validate()) {
+                                        controller.editProfil(
+                                            controller
+                                                .usernameEditProfileC.text,
+                                            controller
+                                                .namaLengkapEditProfileC.text,
+                                            controller.noKtpEditProfileC.text,
+                                            controller.noTelpEditProfileC.text,
+                                            controller.alamatEditProfileC.text);
+                                      }
+                                    });
+                                  },
+                                  animationController:
+                                      controller.cAniUbahGambar,
+                                  onLongPressEnd: (details) async {
+                                    await controller.cAniUbahGambar.forward();
+                                    await controller.cAniUbahGambar.reverse();
                                     if (controller.usernameEditProfileKey.value
                                             .currentState!
                                             .validate() &&
@@ -210,29 +249,15 @@ class EditProfileView extends GetView<EditProfileController> {
                                           controller.alamatEditProfileC.text);
                                     }
                                   },
-                                  child: Container(
-                                    height: 6.h,
-                                    width: 50.w,
-                                    decoration: BoxDecoration(
-                                      color: yellow1_F9B401,
-                                      borderRadius: BorderRadius.circular(25),
-                                    ),
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                          right: 8.w, left: 8.w),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Icon(
-                                            PhosphorIconsBold.floppyDisk,
-                                            size: 6.w,
-                                          ),
-                                          const Text('Simpan'),
-                                        ],
-                                      ),
-                                    ),
+                                  elevation: 0,
+                                  btnColor: yellow1_F9B401,
+                                  icon: Icon(
+                                    PhosphorIconsBold.floppyDisk,
+                                    size: 6.w,
                                   ),
+                                  width: 50.w,
+                                  text: 'Simpan',
+                                  textColor: black,
                                 ),
                               ],
                             ),

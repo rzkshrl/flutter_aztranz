@@ -8,6 +8,7 @@ import 'package:sizer/sizer.dart';
 import '../../../controller/auth_controller.dart';
 import '../../../routes/app_pages.dart';
 import '../../../theme/theme.dart';
+import '../../../utils/button.dart';
 import '../../../utils/loading.dart';
 import '../controllers/profile_user_controller.dart';
 
@@ -18,6 +19,7 @@ class ProfileUserView extends GetView<ProfileUserController> {
     var defaultImage =
         "https://ui-avatars.com/api/?background=fff38a&color=5175c0&font-size=0.33&size=256";
     final authC = Get.put(AuthController());
+    final controller = Get.put(ProfileUserController());
     return Scaffold(
       appBar: AppBar(
         title: Column(
@@ -165,32 +167,33 @@ class ProfileUserView extends GetView<ProfileUserController> {
                           SizedBox(
                             height: 4.h,
                           ),
-                          InkWell(
+                          buttonWithIcon(
                             onTap: () {
-                              authC.logout();
+                              controller.cAniLogout.forward();
+                              Future.delayed(const Duration(milliseconds: 70),
+                                  () {
+                                controller.cAniLogout.reverse();
+                              });
+                              Future.delayed(const Duration(milliseconds: 120))
+                                  .then((value) {
+                                authC.logout();
+                              });
                             },
-                            child: Container(
-                              height: 6.h,
-                              width: 50.w,
-                              decoration: BoxDecoration(
-                                color: yellow1_F9B401,
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.only(right: 8.w, left: 8.w),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Icon(
-                                      PhosphorIconsBold.door,
-                                      size: 6.w,
-                                    ),
-                                    const Text('Keluar'),
-                                  ],
-                                ),
-                              ),
+                            animationController: controller.cAniLogout,
+                            onLongPressEnd: (details) async {
+                              await controller.cAniLogout.forward();
+                              await controller.cAniLogout.reverse();
+                              await authC.logout();
+                            },
+                            elevation: 0,
+                            btnColor: yellow1_F9B401,
+                            icon: Icon(
+                              PhosphorIconsBold.door,
+                              size: 6.w,
                             ),
+                            width: 50.w,
+                            text: 'Keluar Akun',
+                            textColor: black,
                           ),
                         ],
                       ),

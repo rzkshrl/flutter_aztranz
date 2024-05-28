@@ -10,7 +10,6 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../controller/auth_controller.dart';
-import '../../../utils/loading.dart';
 import '../controllers/dashboard_user_controller.dart';
 
 class DashboardUserView extends GetView<DashboardUserController> {

@@ -14,6 +14,7 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import '../../../controller/api_controller.dart';
 import '../../../data/models/datamobilmodel.dart';
 import '../../../theme/textstyle.dart';
+import '../../../utils/button.dart';
 import '../../../utils/dialog.dart';
 import '../../payment/controllers/payment_controller.dart';
 import '../controllers/form_pesan_mobil_controller.dart';
@@ -256,15 +257,22 @@ class FormPesanMobilView extends GetView<FormPesanMobilController> {
                               SizedBox(
                                 height: 2.h,
                               ),
-                              Center(
-                                child: InkWell(
-                                  onTap: () async {
+                              buttonNoIcon(
+                                onTap: () {
+                                  controller.cAniBayarSekarang.forward();
+                                  Future.delayed(
+                                      const Duration(milliseconds: 70), () {
+                                    controller.cAniBayarSekarang.reverse();
+                                  });
+                                  Future.delayed(
+                                          const Duration(milliseconds: 120))
+                                      .then((value) {
                                     c.hargaPerHariCalculated.value =
                                         c.dateRange.value == 0
                                             ? hargaPerHariIDR
                                             : hargaPerHariIDR *
                                                 c.dateRange.value;
-                                    Get.dialog(dialogLoading());
+
                                     if (c.namaLengkapFormPesanKey.value
                                             .currentState!
                                             .validate() &&
@@ -274,7 +282,7 @@ class FormPesanMobilView extends GetView<FormPesanMobilController> {
                                             .validate() &&
                                         c.alamatFormPesanKey.value.currentState!
                                             .validate()) {
-                                      await c.pesanMobilAPI(
+                                      c.pesanMobilAPI(
                                           dataMobil.id!,
                                           c.hargaPerHariCalculated.value
                                               .toString(),
@@ -283,30 +291,44 @@ class FormPesanMobilView extends GetView<FormPesanMobilController> {
                                           c.noKtpFormPesanC.text,
                                           c.noTelpFormPesanC.text,
                                           c.alamatFormPesanC.text);
-
-                                      await Future.delayed(
-                                          const Duration(seconds: 3));
-
-                                      await c.midtrans?.startPaymentUiFlow(
-                                          token: apiC.snapToken);
-                                      // await c.testPayment();
-                                      // await Get.toNamed(Routes.PAYMENT);
                                     }
-                                  },
-                                  child: Container(
-                                    height: 6.h,
-                                    decoration: BoxDecoration(
-                                      color: yellow1_F9B401,
-                                      borderRadius: BorderRadius.circular(25),
-                                    ),
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                          right: 5.w, left: 5.w),
-                                      child: const Center(
-                                          child: Text('Bayar Sekarang')),
-                                    ),
-                                  ),
-                                ),
+                                  });
+                                },
+                                animationController:
+                                    controller.cAniBayarSekarang,
+                                onLongPressEnd: (details) async {
+                                  await controller.cAniBayarSekarang.forward();
+                                  await controller.cAniBayarSekarang.reverse();
+                                  c.hargaPerHariCalculated.value =
+                                      c.dateRange.value == 0
+                                          ? hargaPerHariIDR
+                                          : hargaPerHariIDR * c.dateRange.value;
+
+                                  if (c.namaLengkapFormPesanKey.value
+                                          .currentState!
+                                          .validate() &&
+                                      c.noKtpFormPesanKey.value.currentState!
+                                          .validate() &&
+                                      c.noTelpFormPesanKey.value.currentState!
+                                          .validate() &&
+                                      c.alamatFormPesanKey.value.currentState!
+                                          .validate()) {
+                                    await c.pesanMobilAPI(
+                                        dataMobil.id!,
+                                        c.hargaPerHariCalculated.value
+                                            .toString(),
+                                        dataMobil.namaMobil!,
+                                        c.namaLengkapFormPesanC.text,
+                                        c.noKtpFormPesanC.text,
+                                        c.noTelpFormPesanC.text,
+                                        c.alamatFormPesanC.text);
+                                  }
+                                },
+                                elevation: 0,
+                                btnColor: yellow1_F9B401,
+                                width: 100.w,
+                                text: 'Bayar Sekarang',
+                                textColor: black,
                               ),
                               SizedBox(
                                 height: 2.h,
