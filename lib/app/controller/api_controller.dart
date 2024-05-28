@@ -6,7 +6,9 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 class APIController extends GetxController {
-  final dio = Dio(BaseOptions(headers: {"Access-Control-Allow-Origin": "*"}));
+  final dio = Dio(BaseOptions(
+      baseUrl: "http://10.0.2.2:8000/",
+      headers: {"Access-Control-Allow-Origin": "*"}));
 
   var dataMobilModel = <DataMobilModel>[].obs;
   var filteredDataMobil = <DataMobilModel>[].obs;
@@ -21,7 +23,7 @@ class APIController extends GetxController {
     try {
       isLoading.value = true;
       dataMobilModel.clear();
-      String url = 'http://10.0.2.2:8000/api/mobil/';
+      String url = 'api/mobil/';
 
       var res = await dio.get(url);
 
@@ -75,7 +77,7 @@ class APIController extends GetxController {
     try {
       isLoading.value = true;
 
-      String url = 'http://10.0.2.2:8000/api/reservasi/store/';
+      String url = 'api/reservasi/store/';
       var data = {
         'mobil_id': idMobil,
         'nama_mobil': namaMobil,
