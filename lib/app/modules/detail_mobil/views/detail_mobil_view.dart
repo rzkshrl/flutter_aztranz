@@ -1,3 +1,4 @@
+import 'package:az_travel/app/data/constants/string.dart';
 import 'package:az_travel/app/data/models/datamobilmodel.dart';
 import 'package:az_travel/app/routes/app_pages.dart';
 import 'package:az_travel/app/utils/button.dart';
@@ -20,8 +21,7 @@ class DetailMobilView extends GetView<DetailMobilController> {
     final formatCurrency =
         NumberFormat.simpleCurrency(locale: 'id_ID', decimalDigits: 0);
     int hargaPerHariIDR = int.parse(dataMobil.hargaPerHari!);
-    var fotoMobilURL =
-        dataMobil.fotoMobil!.replaceRange(7, 21, '10.0.2.2:8000');
+    var fotoMobilURL = dataMobil.fotoMobil!.replaceRange(7, 21, LOCALHOST);
     return AnnotatedRegion(
       value: const SystemUiOverlayStyle(
         statusBarBrightness: Brightness.dark,

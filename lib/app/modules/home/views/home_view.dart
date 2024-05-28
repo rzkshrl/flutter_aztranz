@@ -1,11 +1,9 @@
 import 'package:az_travel/app/controller/auth_controller.dart';
 import 'package:az_travel/app/modules/dashboard_user/views/dashboard_user_view.dart';
-import 'package:az_travel/app/modules/data_pelanggan/views/data_pelanggan_view.dart';
-import 'package:az_travel/app/modules/data_reservasi/views/data_reservasi_view.dart';
 import 'package:az_travel/app/modules/profile_user/views/profile_user_view.dart';
+import 'package:az_travel/app/modules/riwayat_user/views/riwayat_user_view.dart';
 import 'package:az_travel/app/utils/dialog.dart';
 import 'package:az_travel/app/utils/loading.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -16,8 +14,6 @@ import '../../../data/models/usermodel.dart';
 import '../../../routes/app_pages.dart';
 import '../../../theme/textstyle.dart';
 import '../../../theme/theme.dart';
-import '../../dashboard/views/dashboard_view.dart';
-import '../../profile/views/profile_view.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -54,122 +50,34 @@ class HomeView extends GetView<HomeController> {
                       ),
                     );
                   } else {
-                    var data = snap.data!;
-                    String? roles = data.roles;
-                    if (kDebugMode) {
-                      print("BISA MASUK");
-                      print("ROLE : $roles");
-                    }
-                    if (roles == null || roles == '') {
-                      return Scaffold(
-                        backgroundColor: error.withOpacity(0.5),
-                        body: dialogAlertBtn(
-                          onPressed: () async {
-                            authC.logout();
-                          },
-                          animationLink: 'assets/lottie/warning_aztravel.json',
-                          widthBtn: 26.w,
-                          textBtn: "OK",
-                          text: "Terjadi Kesalahan!",
-                          textSub: "Silahkan Login Ulang",
-                          textAlert: getTextAlert(context),
-                          textAlertSub: getTextAlertSub(context),
-                          textAlertBtn: getTextAlertBtn(context),
+                    var pagesUser = <Widget>[
+                      const DashboardUserView(),
+                      const RiwayatUserView(),
+                      const ProfileUserView(),
+                    ];
+                    return Scaffold(
+                      body:
+                          Obx(() => pagesUser[controller.currentIndex2.value]),
+                      bottomNavigationBar: Container(
+                        decoration: BoxDecoration(
+                          color: light,
                         ),
-                      );
-                    } else {
-                      if (roles == 'admin') {
-                        var pagesAdmin = <Widget>[
-                          const DashboardView(),
-                          const DataReservasiView(),
-                          const DataPelangganView(),
-                          const ProfileView(),
-                        ];
-                        return Scaffold(
-                          body: Obx(
-                              () => pagesAdmin[controller.currentIndex.value]),
-                          bottomNavigationBar: Container(
-                            decoration: BoxDecoration(
-                              color: light,
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.only(right: 2.w, left: 2.w),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  navBarItem(context, PhosphorIconsLight.house,
-                                      'Beranda', 0, controller.cAniDashboard),
-                                  navBarItem(
-                                      context,
-                                      PhosphorIconsLight.clockCounterClockwise,
-                                      'Reservasi',
-                                      1,
-                                      controller.cAniHistory),
-                                  navBarItem(
-                                      context,
-                                      PhosphorIconsLight.userList,
-                                      'Pengguna',
-                                      2,
-                                      controller.cAniUsers),
-                                  navBarItem(context, PhosphorIconsLight.user,
-                                      'Profil', 3, controller.cAniProfile),
-                                ],
-                              ),
-                            ),
+                        child: Padding(
+                          padding: EdgeInsets.only(right: 2.w, left: 2.w),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              navBarItem2(context, PhosphorIconsLight.house,
+                                  'Beranda', 0, controller.cAniDashboardUser),
+                              navBarItem2(context, PhosphorIconsLight.user,
+                                  'Riwayat', 1, controller.cAniRiwayatUser),
+                              navBarItem2(context, PhosphorIconsLight.user,
+                                  'Profil', 2, controller.cAniProfileUser),
+                            ],
                           ),
-                        );
-                      } else if (roles == 'user') {
-                        var pagesUser = <Widget>[
-                          const DashboardUserView(),
-                          const ProfileUserView(),
-                        ];
-                        return Scaffold(
-                          body: Obx(
-                              () => pagesUser[controller.currentIndex2.value]),
-                          bottomNavigationBar: Container(
-                            decoration: BoxDecoration(
-                              color: light,
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.only(right: 2.w, left: 2.w),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  navBarItem2(
-                                      context,
-                                      PhosphorIconsLight.house,
-                                      'Beranda',
-                                      0,
-                                      controller.cAniDashboardUser),
-                                  navBarItem2(context, PhosphorIconsLight.user,
-                                      'Profil', 1, controller.cAniProfileUser),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      } else {
-                        return Scaffold(
-                          backgroundColor: error.withOpacity(0.5),
-                          body: dialogAlertBtn(
-                            onPressed: () async {
-                              authC.logout();
-                            },
-                            animationLink:
-                                'assets/lottie/warning_aztravel.json',
-                            widthBtn: 26.w,
-                            textBtn: "OK",
-                            text: "Terjadi Kesalahan!",
-                            textSub: "Silahkan Login Ulang",
-                            textAlert: getTextAlert(context),
-                            textAlertSub: getTextAlertSub(context),
-                            textAlertBtn: getTextAlertBtn(context),
-                          ),
-                        );
-                      }
-                    }
+                        ),
+                      ),
+                    );
                   }
                 } else {
                   return const LoadingView();

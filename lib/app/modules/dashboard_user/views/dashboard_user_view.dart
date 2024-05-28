@@ -1,4 +1,5 @@
 import 'package:az_travel/app/controller/api_controller.dart';
+import 'package:az_travel/app/data/constants/string.dart';
 import 'package:az_travel/app/routes/app_pages.dart';
 import 'package:az_travel/app/theme/theme.dart';
 import 'package:az_travel/app/utils/textfield.dart';
@@ -201,7 +202,7 @@ class DashboardUserView extends GetView<DashboardUserController> {
                               int.parse(dataMobil.hargaPerHari!);
 
                           var fotoMobilURL = dataMobil.fotoMobil!
-                              .replaceRange(7, 21, '10.0.2.2:8000');
+                              .replaceRange(7, 21, LOCALHOST);
 
                           return AnimatedBuilder(
                             animation: c.cAniDashboardCategories[index]!,

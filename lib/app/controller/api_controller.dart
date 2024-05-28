@@ -1,14 +1,15 @@
 // ignore_for_file: invalid_use_of_protected_member
 
+import 'package:az_travel/app/data/constants/string.dart';
 import 'package:az_travel/app/data/models/datamobilmodel.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart' as dot_env;
 
 class APIController extends GetxController {
   final dio = Dio(BaseOptions(
-      baseUrl: "http://10.0.2.2:8000/",
-      headers: {"Access-Control-Allow-Origin": "*"}));
+      baseUrl: PHYSICAL_IP, headers: {"Access-Control-Allow-Origin": "*"}));
 
   var dataMobilModel = <DataMobilModel>[].obs;
   var filteredDataMobil = <DataMobilModel>[].obs;
