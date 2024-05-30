@@ -1,4 +1,3 @@
-import 'package:az_travel/app/data/constants/string.dart';
 import 'package:az_travel/app/data/models/datamobilmodel.dart';
 import 'package:az_travel/app/routes/app_pages.dart';
 import 'package:az_travel/app/utils/button.dart';
@@ -10,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../../controller/api_controller.dart';
 import '../../../theme/theme.dart';
 import '../controllers/detail_mobil_controller.dart';
 
@@ -21,7 +21,8 @@ class DetailMobilView extends GetView<DetailMobilController> {
     final formatCurrency =
         NumberFormat.simpleCurrency(locale: 'id_ID', decimalDigits: 0);
     int hargaPerHariIDR = int.parse(dataMobil.hargaPerHari!);
-    var fotoMobilURL = dataMobil.fotoMobil!.replaceRange(7, 21, LOCALHOST);
+    final apiC = Get.put(APIController());
+    var fotoMobilURL = dataMobil.fotoMobil!.replaceRange(7, 21, apiC.imageIP);
     return AnnotatedRegion(
       value: const SystemUiOverlayStyle(
         statusBarBrightness: Brightness.dark,

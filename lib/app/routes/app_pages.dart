@@ -4,6 +4,8 @@ import '../modules/dashboard_user/bindings/dashboard_user_binding.dart';
 import '../modules/dashboard_user/views/dashboard_user_view.dart';
 import '../modules/detail_mobil/bindings/detail_mobil_binding.dart';
 import '../modules/detail_mobil/views/detail_mobil_view.dart';
+import '../modules/detail_riwayat/bindings/detail_riwayat_binding.dart';
+import '../modules/detail_riwayat/views/detail_riwayat_view.dart';
 import '../modules/edit_profile/bindings/edit_profile_binding.dart';
 import '../modules/edit_profile/views/edit_profile_view.dart';
 import '../modules/form_pesan_mobil/bindings/form_pesan_mobil_binding.dart';
@@ -94,6 +96,11 @@ class AppPages {
       name: _Paths.RIWAYAT_USER,
       page: () => const RiwayatUserView(),
       binding: RiwayatUserBinding(),
+    ),
+    GetPage(
+      name: _Paths.DETAIL_RIWAYAT,
+      page: () => const DetailRiwayatView(),
+      binding: DetailRiwayatBinding(),
     ),
   ];
 }

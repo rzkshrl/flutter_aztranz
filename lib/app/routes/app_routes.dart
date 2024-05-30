@@ -25,6 +25,7 @@ abstract class Routes {
   static const EDIT_PROFILE = _Paths.EDIT_PROFILE;
   static const PAYMENT = _Paths.PAYMENT;
   static const RIWAYAT_USER = _Paths.RIWAYAT_USER;
+  static const DETAIL_RIWAYAT = _Paths.DETAIL_RIWAYAT;
 }
 
 abstract class _Paths {
@@ -49,4 +50,5 @@ abstract class _Paths {
   static const EDIT_PROFILE = '/edit-profile';
   static const PAYMENT = '/payment';
   static const RIWAYAT_USER = '/riwayat-user';
+  static const DETAIL_RIWAYAT = '/detail-riwayat';
 }

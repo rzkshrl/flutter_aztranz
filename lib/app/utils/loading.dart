@@ -14,16 +14,37 @@ class LoadingView extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-          backgroundColor: light,
-          body: Center(
-              child: Lottie.asset('assets/lottie/loading_aztravel.json',
-                  height: 135))),
+        backgroundColor: light,
+        body: Center(
+          child:
+              Lottie.asset('assets/lottie/loading_aztravel.json', height: 135),
+        ),
+      ),
     );
   }
 }
 
 Future<void> simulateDelay() async {
   await Future.delayed(const Duration(milliseconds: 1500));
+}
+
+Future<void> simulateDelayShorter() async {
+  await Future.delayed(const Duration(milliseconds: 750));
+}
+
+Widget loadingProp() {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      SizedBox(
+        height: 25.h,
+      ),
+      Center(
+        child: Lottie.asset('assets/lottie/loading_aztravel.json', height: 135),
+      ),
+    ],
+  );
 }
 
 Widget dialogLoading() {

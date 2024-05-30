@@ -2,22 +2,22 @@
 
 import 'package:az_travel/app/data/constants/string.dart';
 import 'package:az_travel/app/data/models/datamobilmodel.dart';
+import 'package:az_travel/app/data/models/pesananmobilmodel.dart';
+import 'package:az_travel/app/utils/loading.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart' as dot_env;
 
 class APIController extends GetxController {
   final dio = Dio(BaseOptions(
-      baseUrl: PHYSICAL_IP, headers: {"Access-Control-Allow-Origin": "*"}));
+      baseUrl: EMULATOR_IP, headers: {"Access-Control-Allow-Origin": "*"}));
 
-  var dataMobilModel = <DataMobilModel>[].obs;
-  var filteredDataMobil = <DataMobilModel>[].obs;
+  var imageIP = EMULATOR;
 
   var isLoading = false.obs;
 
-  var snapToken = '';
-
+  var dataMobilModel = <DataMobilModel>[].obs;
+  var filteredDataMobil = <DataMobilModel>[].obs;
   var searchText = ''.obs;
 
   Future<void> getDataMobil() async {
@@ -28,9 +28,9 @@ class APIController extends GetxController {
 
       var res = await dio.get(url);
 
-      if (kDebugMode) {
-        print(res.data);
-      }
+      // if (kDebugMode) {
+      //   print(res.data);
+      // }
 
       if (res.statusCode == 200) {
         var dataMobil = List.from(res.data['data'] as List)
@@ -38,6 +38,7 @@ class APIController extends GetxController {
             .toList();
         dataMobilModel.assignAll(dataMobil);
         filteredDataMobil.assignAll(dataMobil);
+        await simulateDelayShorter();
         isLoading.value = false;
       } else {
         Get.snackbar('Gagal', 'Terjadi kesalahan.');
@@ -64,6 +65,61 @@ class APIController extends GetxController {
       );
     }
   }
+
+  var dataReservasiModel = <DataReservasiModel>[].obs;
+  var filteredDataReservasiModel = <DataReservasiModel>[].obs;
+  var searchTextHistory = ''.obs;
+
+  Future<void> getDataReservasi() async {
+    try {
+      isLoading.value = true;
+      dataMobilModel.clear();
+      String url = 'api/reservasi/';
+
+      var res = await dio.get(url);
+
+      // if (kDebugMode) {
+      //   print(res.data);
+      // }
+
+      if (res.statusCode == 200) {
+        var dataReservasi = List.from(res.data['data'] as List)
+            .map((e) => DataReservasiModel.fromJson(e))
+            .toList();
+        dataReservasiModel.assignAll(dataReservasi);
+        filteredDataReservasiModel.assignAll(dataReservasi);
+        await simulateDelayShorter();
+        isLoading.value = false;
+      } else {
+        Get.snackbar('Gagal', 'Terjadi kesalahan.');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('$e');
+        Get.snackbar('Gagal', 'Terjadi kesalahan.');
+      }
+      throw Exception('Failed to load data');
+    }
+  }
+
+  void searchRiwayatReservasi(String query) {
+    searchTextHistory.value = query;
+    if (query.isEmpty) {
+      filteredDataReservasiModel.assignAll(dataReservasiModel);
+    } else {
+      filteredDataReservasiModel.assignAll(
+        dataReservasiModel
+            .where(
+              (item) => item.namaMobil!.toLowerCase().contains(
+                    query.toLowerCase(),
+                  ),
+            )
+            .toList(),
+      );
+    }
+  }
+
+  var snapToken = '';
 
   Future<void> postDataReservasi(
       int idMobil,

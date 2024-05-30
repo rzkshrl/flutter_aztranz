@@ -3,9 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../controller/api_controller.dart';
+
 class RiwayatUserController extends GetxController
     with GetTickerProviderStateMixin {
-  var showTitle = false.obs;
+  var showTitle2 = false.obs;
   final Map<int, AnimationController> cAniHistoryItem = {};
   final Map<int, bool> isItemClicked = {};
 
@@ -26,9 +28,16 @@ class RiwayatUserController extends GetxController
     update();
   }
 
+  TextEditingController searchRiwayatC = TextEditingController();
+  var searchRiwayatFormKey = GlobalKey<FormState>().obs;
+  var searchRiwayatFormKey2 = GlobalKey<FormState>().obs;
+
+  final apiC = Get.put(APIController());
+
   @override
   void onInit() {
     super.onInit();
+    apiC.getDataReservasi();
   }
 
   @override

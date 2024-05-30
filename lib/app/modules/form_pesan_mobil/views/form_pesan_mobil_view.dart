@@ -26,7 +26,7 @@ class FormPesanMobilView extends GetView<FormPesanMobilController> {
     final authC = Get.put(AuthController());
     final c = Get.put(FormPesanMobilController());
     Get.put(PaymentController());
-    var apiC = Get.put(APIController());
+    Get.put(APIController());
     final dataMobil = Get.arguments as DataMobilModel;
     final formatCurrency =
         NumberFormat.simpleCurrency(locale: 'id_ID', decimalDigits: 0);

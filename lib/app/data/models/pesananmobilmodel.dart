@@ -1,42 +1,46 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
-class PesananMobil {
-  String? id;
-  String? idMobil;
-  String? harga;
+class DataReservasiModel {
+  int? idReservasi;
+  int? mobilId;
+  String? orderId;
+  int? grossAmount;
   String? namaMobil;
   String? namaPemesan;
+  String? alamatPemesan;
+  String? harga;
   String? noKTPPemesan;
   String? noTelpPemesan;
-  String? alamatPemesan;
   String? tanggalPesanStart;
   String? tanggalPesanEnd;
 
-  PesananMobil({
-    this.id,
-    this.idMobil,
-    this.harga,
+  DataReservasiModel({
+    this.idReservasi,
+    this.mobilId,
+    this.orderId,
+    this.grossAmount,
     this.namaMobil,
     this.namaPemesan,
+    this.alamatPemesan,
+    this.harga,
     this.noKTPPemesan,
     this.noTelpPemesan,
-    this.alamatPemesan,
     this.tanggalPesanStart,
     this.tanggalPesanEnd,
   });
 
-  factory PesananMobil.fromJson(DocumentSnapshot data) {
-    final json = data.data() as Map<String, dynamic>;
-    return PesananMobil(
-      id: json['id'],
-      idMobil: json['idMobil'],
+  factory DataReservasiModel.fromJson(Map<String, dynamic> json) {
+    return DataReservasiModel(
+      idReservasi: json['id_reservasi'],
+      mobilId: json['mobil_id'],
+      orderId: json['order_id'],
+      grossAmount: json['gross_amount'],
+      namaMobil: json['nama_mobil'],
+      namaPemesan: json['nama_pemesan'],
+      alamatPemesan: json['alamat'],
       harga: json['harga'],
-      namaMobil: json['namaMobil'],
-      namaPemesan: json['namaPemesan'],
-      noKTPPemesan: json['noKTPPemesan'],
-      alamatPemesan: json['alamatPemesan'],
-      tanggalPesanStart: json['tanggalPesanStart'],
-      tanggalPesanEnd: json['tanggalPesanEnd'],
+      noKTPPemesan: json['no_ktp'],
+      noTelpPemesan: json['telepon'],
+      tanggalPesanStart: json['tanggalpesan_start'],
+      tanggalPesanEnd: json['tanggalpesan_end'],
     );
   }
 }
