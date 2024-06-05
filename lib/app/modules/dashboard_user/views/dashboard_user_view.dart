@@ -20,7 +20,7 @@ class DashboardUserView extends GetView<DashboardUserController> {
     final c = Get.put(DashboardUserController());
     final apiC = Get.put(APIController());
     apiC.getDataMobil();
-    final authC = Get.put(AuthController());
+    Get.put(AuthController());
 
     // add scrollcontroller to listen scroll activity for appbar
     final ScrollController scrollController = ScrollController();
@@ -135,6 +135,7 @@ class DashboardUserView extends GetView<DashboardUserController> {
                               isDatePicker: false,
                               onChanged: (value) {
                                 apiC.searchMobil(value);
+                                c.showTitle.value = false;
                               },
                             ),
                           ],

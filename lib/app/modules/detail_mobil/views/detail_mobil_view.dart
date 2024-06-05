@@ -1,6 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:az_travel/app/controller/auth_controller.dart';
 import 'package:az_travel/app/data/models/datamobilmodel.dart';
 import 'package:az_travel/app/routes/app_pages.dart';
 import 'package:az_travel/app/utils/button.dart';
+import 'package:az_travel/app/utils/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -10,6 +14,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../controller/api_controller.dart';
+import '../../../theme/textstyle.dart';
 import '../../../theme/theme.dart';
 import '../controllers/detail_mobil_controller.dart';
 
@@ -22,6 +27,7 @@ class DetailMobilView extends GetView<DetailMobilController> {
         NumberFormat.simpleCurrency(locale: 'id_ID', decimalDigits: 0);
     int hargaPerHariIDR = int.parse(dataMobil.hargaPerHari!);
     final apiC = Get.put(APIController());
+    Get.put(AuthController());
     var fotoMobilURL = dataMobil.fotoMobil!.replaceRange(7, 21, apiC.imageIP);
     return AnnotatedRegion(
       value: const SystemUiOverlayStyle(
@@ -196,16 +202,64 @@ class DetailMobilView extends GetView<DetailMobilController> {
                           });
                           Future.delayed(const Duration(milliseconds: 120))
                               .then((value) {
-                            Get.toNamed(Routes.FORM_PESAN_MOBIL,
-                                arguments: dataMobil);
+                            if (apiC.dataUserModel.value.namaLengkap == null &&
+                                apiC.dataUserModel.value.noKTP == null &&
+                                apiC.dataUserModel.value.nomorTelepon == null &&
+                                apiC.dataUserModel.value.alamat == null) {
+                              Get.dialog(
+                                dialogAlertBtn(
+                                  onPressed: () async {
+                                    Get.back();
+                                    Get.toNamed(Routes.EDIT_PROFILE);
+                                  },
+                                  animationLink:
+                                      'assets/lottie/warning_aztravel.json',
+                                  widthBtn: 26.w,
+                                  textBtn: "OK",
+                                  text: "Profil belum lengkap!",
+                                  textSub:
+                                      "Lengkapi profil anda sebelum melakukan pesanan",
+                                  textAlert: getTextAlert(context),
+                                  textAlertSub: getTextAlertSub(context),
+                                  textAlertBtn: getTextAlertBtn(context),
+                                ),
+                              );
+                            } else {
+                              Get.toNamed(Routes.FORM_PESAN_MOBIL,
+                                  arguments: dataMobil);
+                            }
                           });
                         },
                         animationController: controller.cAniPesanSekarang,
                         onLongPressEnd: (details) async {
                           await controller.cAniPesanSekarang.forward();
                           await controller.cAniPesanSekarang.reverse();
-                          await Get.toNamed(Routes.FORM_PESAN_MOBIL,
-                              arguments: dataMobil);
+                          if (apiC.dataUserModel.value.namaLengkap == null &&
+                              apiC.dataUserModel.value.noKTP == null &&
+                              apiC.dataUserModel.value.nomorTelepon == null &&
+                              apiC.dataUserModel.value.alamat == null) {
+                            Get.dialog(
+                              dialogAlertBtn(
+                                onPressed: () async {
+                                  Get.back();
+                                  Get.toNamed(Routes.EDIT_PROFILE);
+                                },
+                                animationLink:
+                                    'assets/lottie/warning_aztravel.json',
+                                widthBtn: 26.w,
+                                textBtn: "OK",
+                                text: "Profil belum lengkap!",
+                                textSub:
+                                    "Lengkapi profil anda sebelum melakukan pesanan",
+                                textAlert: getTextAlert(context),
+                                textAlertSub: getTextAlertSub(context),
+                                textAlertBtn: getTextAlertBtn(context),
+                              ),
+                            );
+                          } else {
+                            await Get.toNamed(Routes.FORM_PESAN_MOBIL,
+                                arguments: dataMobil);
+                          }
                         },
                         elevation: 0,
                         btnColor: yellow1_F9B401,

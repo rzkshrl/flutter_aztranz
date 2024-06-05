@@ -2,7 +2,6 @@ import 'package:az_travel/app/controller/auth_controller.dart';
 import 'package:az_travel/app/modules/dashboard_user/views/dashboard_user_view.dart';
 import 'package:az_travel/app/modules/profile_user/views/profile_user_view.dart';
 import 'package:az_travel/app/modules/riwayat_user/views/riwayat_user_view.dart';
-import 'package:az_travel/app/utils/dialog.dart';
 import 'package:az_travel/app/utils/loading.dart';
 import 'package:flutter/material.dart';
 
@@ -10,9 +9,7 @@ import 'package:get/get.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../data/models/usermodel.dart';
 import '../../../routes/app_pages.dart';
-import '../../../theme/textstyle.dart';
 import '../../../theme/theme.dart';
 import '../controllers/home_controller.dart';
 
@@ -20,7 +17,7 @@ class HomeView extends GetView<HomeController> {
   const HomeView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    var authC = Get.put(AuthController());
+    Get.put(AuthController());
 
     return FutureBuilder(
         future: simulateDelay(),
@@ -28,61 +25,34 @@ class HomeView extends GetView<HomeController> {
           if (snap.connectionState == ConnectionState.waiting) {
             return const LoadingView();
           }
-          return StreamBuilder<UserModel>(
-              stream: authC.getUserData(),
-              builder: (context, snap) {
-                if (snap.hasData) {
-                  if (snap.data == null) {
-                    return Scaffold(
-                      backgroundColor: error.withOpacity(0.5),
-                      body: dialogAlertBtn(
-                        onPressed: () async {
-                          authC.logout();
-                        },
-                        animationLink: 'assets/lottie/warning_aztravel.json',
-                        widthBtn: 26.w,
-                        textBtn: "OK",
-                        text: "Terjadi Kesalahan!",
-                        textSub: "Silahkan Login Ulang",
-                        textAlert: getTextAlert(context),
-                        textAlertSub: getTextAlertSub(context),
-                        textAlertBtn: getTextAlertBtn(context),
-                      ),
-                    );
-                  } else {
-                    var pagesUser = <Widget>[
-                      const DashboardUserView(),
-                      const RiwayatUserView(),
-                      const ProfileUserView(),
-                    ];
-                    return Scaffold(
-                      body:
-                          Obx(() => pagesUser[controller.currentIndex2.value]),
-                      bottomNavigationBar: Container(
-                        decoration: BoxDecoration(
-                          color: light,
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.only(right: 2.w, left: 2.w),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              navBarItem2(context, PhosphorIconsLight.house,
-                                  'Beranda', 0, controller.cAniDashboardUser),
-                              navBarItem2(context, PhosphorIconsLight.user,
-                                  'Riwayat', 1, controller.cAniRiwayatUser),
-                              navBarItem2(context, PhosphorIconsLight.user,
-                                  'Profil', 2, controller.cAniProfileUser),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-                } else {
-                  return const LoadingView();
-                }
-              });
+
+          var pagesUser = <Widget>[
+            const DashboardUserView(),
+            const RiwayatUserView(),
+            const ProfileUserView(),
+          ];
+          return Scaffold(
+            body: Obx(() => pagesUser[controller.currentIndex2.value]),
+            bottomNavigationBar: Container(
+              decoration: BoxDecoration(
+                color: light,
+              ),
+              child: Padding(
+                padding: EdgeInsets.only(right: 2.w, left: 2.w),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    navBarItem2(context, PhosphorIconsLight.house, 'Beranda', 0,
+                        controller.cAniDashboardUser),
+                    navBarItem2(context, PhosphorIconsLight.user, 'Riwayat', 1,
+                        controller.cAniRiwayatUser),
+                    navBarItem2(context, PhosphorIconsLight.user, 'Profil', 2,
+                        controller.cAniProfileUser),
+                  ],
+                ),
+              ),
+            ),
+          );
         });
   }
 

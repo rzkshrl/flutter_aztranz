@@ -2,6 +2,7 @@ import 'package:az_travel/app/controller/auth_controller.dart';
 import 'package:az_travel/app/routes/app_pages.dart';
 import 'package:az_travel/app/utils/button.dart';
 import 'package:az_travel/app/utils/textfield.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -18,7 +19,8 @@ class LoginView extends GetView<LoginController> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(LoginController());
-    final authC = AuthController();
+    final authC = Get.put(AuthController());
+
     return AnnotatedRegion(
       value: const SystemUiOverlayStyle(
         statusBarBrightness: Brightness.light,
@@ -115,6 +117,11 @@ class LoginView extends GetView<LoginController> {
                                         controller.emailC.text,
                                         controller.passC.text,
                                       );
+
+                                      if (kDebugMode) {
+                                        print(controller.emailC.text);
+                                        print(controller.passC.text);
+                                      }
                                     }
                                   });
                                 },

@@ -4,6 +4,8 @@ import 'package:flutter/widgets.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/get.dart';
 
+import '../../../controller/api_controller.dart';
+
 class LoginController extends GetxController with GetTickerProviderStateMixin {
   late final AnimationController cAniEmailLogin;
   bool isEmailLoginClicked = false;
@@ -26,6 +28,8 @@ class LoginController extends GetxController with GetTickerProviderStateMixin {
   ]);
 
   final isPasswordHidden = true.obs;
+
+  final apiC = Get.put(APIController());
 
   @override
   void onInit() {

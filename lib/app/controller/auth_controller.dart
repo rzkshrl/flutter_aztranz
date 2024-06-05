@@ -2,9 +2,9 @@
 
 import 'dart:developer';
 
+import 'package:az_travel/app/controller/api_controller.dart';
 import 'package:az_travel/app/theme/textstyle.dart';
 import 'package:az_travel/app/utils/loading.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
@@ -28,25 +28,35 @@ class AuthController extends GetxController {
   UserCredential? userCredential;
 
   //inisialisasi database firestore
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  // FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   FirebaseAuth auth = FirebaseAuth.instance;
 
   //inisiasi model data user
   var userData = UserModel().obs;
 
-  late Stream<UserModel> firestoreUserModel;
+  var dataUserModel = UserSQLModel().obs;
+
+  // late Stream<UserModel> firestoreUserModel;
 
   var buildContext = Get.context?.obs;
 
-  Stream<UserModel> getUserData() async* {
-    var email = auth.currentUser!.email;
-    yield* firestoreUserModel = firestore
-        .collection('users')
-        .doc(email)
-        .snapshots()
-        .map((documentSnapshot) => UserModel.fromJson(documentSnapshot));
-  }
+  var apiC = Get.put(APIController());
+
+  // Future<UserSQLModel?> fetchUserData() {
+  //   log('mengambil data user ges');
+  //   var email = auth.currentUser!.email;
+  //   return apiC.getDataUserCondition(email!);
+  // }
+
+  // Stream<UserModel> getUserData() async* {
+  //   var email = auth.currentUser!.email;
+  //   yield* firestoreUserModel = firestore
+  //       .collection('users')
+  //       .doc(email)
+  //       .snapshots()
+  //       .map((documentSnapshot) => UserModel.fromJson(documentSnapshot));
+  // }
 
   // variabel reactive untuk text error form
   var errorStatusPass = false.obs;
@@ -62,11 +72,12 @@ class AuthController extends GetxController {
     await autoLogin().then((value) {
       if (value) {
         isAuth.value = true;
-        firestoreUserModel = firestore
-            .collection('users')
-            .doc(auth.currentUser!.email)
-            .snapshots()
-            .map((documentSnapshot) => UserModel.fromJson(documentSnapshot));
+        // firestoreUserModel = firestore
+        //     .collection('users')
+        //     .doc(auth.currentUser!.email)
+        //     .snapshots()
+        //     .map((documentSnapshot) => UserModel.fromJson(documentSnapshot));
+        apiC.getDataUserCondition(auth.currentUser!.email!);
       }
     });
   }
@@ -91,6 +102,27 @@ class AuthController extends GetxController {
           email: email, password: password);
       await userCredential.user!.sendEmailVerification();
       return userCredential;
+    } on FirebaseAuthException catch (e) {
+      var context = buildContext!.value;
+      if (e.code == 'email-already-in-use') {
+        if (kDebugMode) {
+          print('Email already in use.');
+        }
+        Get.dialog(
+          dialogAlertOnly(
+            animationLink: 'assets/lottie/warning_aztravel.json',
+            text: "Terjadi Kesalahan!",
+            textSub: "Email sudah dipakai.",
+            textAlert: getTextAlert(context),
+            textAlertSub: getTextAlertSub(context),
+          ),
+        );
+      } else {
+        if (kDebugMode) {
+          print('Error : $e');
+        }
+      }
+      rethrow;
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -118,12 +150,10 @@ class AuthController extends GetxController {
         errorStatusPassAgain.value = true;
         errorTextPassAgain.value = 'Kata sandi harus sama!';
       }
-      final userData = firestore.collection('users');
 
-      final docRef = userData.doc(email);
-      final checkData = await docRef.get();
+      apiC.getDataUserCondition(email);
 
-      if (checkData.exists == false) {
+      if (apiC.dataUserModel.value.email == null) {
         UserCredential user = await createUser(email, password);
 
         Get.back();
@@ -138,17 +168,15 @@ class AuthController extends GetxController {
           await userNow.updateDisplayName(namaLengkap);
         }
 
-        await userData.doc(email).set({
-          "uid": uid,
-          "photoUrl": '',
-          "roles": 'user',
-          "email": email,
-          "noKTP": noKTP,
-          "username": username,
-          "namaLengkap": namaLengkap,
-          "nomorTelepon": noTelp,
-          "alamat": alamat,
-        });
+        apiC.postUsers(
+            username: username,
+            email: email,
+            namaLengkap: namaLengkap,
+            noKTP: noKTP,
+            noTelp: noTelp,
+            alamat: alamat,
+            uid: uid,
+            fotoUrl: '');
 
         if (kDebugMode) {
           print('User berhasil dibuat dan bisa login');
@@ -177,6 +205,66 @@ class AuthController extends GetxController {
           ),
         );
       }
+
+      // final userData = firestore.collection('users');
+
+      // final docRef = userData.doc(email);
+      // final checkData = await docRef.get();
+
+      // if (checkData.exists == false) {
+      //   UserCredential user = await createUser(email, password);
+
+      //   Get.back();
+
+      //   String uid = user.user?.uid ?? '';
+
+      //   User? userNow = await auth
+      //       .authStateChanges()
+      //       .firstWhere((user) => user?.uid == uid);
+
+      //   if (userNow != null) {
+      //     await userNow.updateDisplayName(namaLengkap);
+      //   }
+
+      //   await userData.doc(email).set({
+      //     "uid": uid,
+      //     "photoUrl": '',
+      //     "roles": 'user',
+      //     "email": email,
+      //     "noKTP": noKTP,
+      //     "username": username,
+      //     "namaLengkap": namaLengkap,
+      //     "nomorTelepon": noTelp,
+      //     "alamat": alamat,
+      //   });
+
+      //   if (kDebugMode) {
+      //     print('User berhasil dibuat dan bisa login');
+      //   }
+
+      //   await Get.dialog(
+      //     dialogAlertOnly(
+      //       animationLink: 'assets/lottie/finish_aztravel.json',
+      //       text: "Berhasil!",
+      //       textSub:
+      //           "Akun berhasil dibuat. Silahkan masuk dan verifikasi akun anda.",
+      //       textAlert: getTextAlert(context),
+      //       textAlertSub: getTextAlertSub(context),
+      //     ),
+      //   );
+
+      //   await Get.offAllNamed(Routes.LOGIN);
+      // } else {
+      //   Get.dialog(
+      //     dialogAlertOnly(
+      //       animationLink: 'assets/lottie/warning_aztravel.json',
+      //       text: "Terjadi Kesalahan!",
+      //       textSub: "Akun sudah ada dan pernah dibuat.",
+      //       textAlert: getTextAlert(context),
+      //       textAlertSub: getTextAlertSub(context),
+      //     ),
+      //   );
+      // }
     } catch (e) {
       if (kDebugMode) {
         log('$e');
@@ -184,37 +272,42 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<UserModel> readUser() async {
-    var users = firestore.collection('users');
-    String emailUser = auth.currentUser!.email.toString();
-    final checkuser = await users.doc(emailUser).get();
+  // Future<UserModel> readUser() async {
+  //   var users = firestore.collection('users');
+  //   String emailUser = auth.currentUser!.email.toString();
+  //   final checkuser = await users.doc(emailUser).get();
 
-    final checkUserData = checkuser.data() as Map<String, dynamic>;
+  //   final checkUserData = checkuser.data() as Map<String, dynamic>;
 
-    userData.value = (UserModel(
-      uid: auth.currentUser!.uid,
-      photoUrl: checkUserData['photoUrl'],
-      email: auth.currentUser!.email,
-      roles: checkUserData['roles'],
-      noKTP: checkUserData['noKTP'],
-      username: checkUserData['username'],
-      namaLengkap: checkUserData['namaLengkap'],
-      nomorTelepon: checkUserData['nomorTelepon'],
-      alamat: checkUserData['alamat'],
-    ));
+  //   userData.value = (UserModel(
+  //     uid: auth.currentUser!.uid,
+  //     photoUrl: checkUserData['photoUrl'],
+  //     email: auth.currentUser!.email,
+  //     roles: checkUserData['roles'],
+  //     noKTP: checkUserData['noKTP'],
+  //     username: checkUserData['username'],
+  //     namaLengkap: checkUserData['namaLengkap'],
+  //     nomorTelepon: checkUserData['nomorTelepon'],
+  //     alamat: checkUserData['alamat'],
+  //   ));
 
-    return userData.value;
-  }
+  //   return userData.value;
+  // }
 
   void login(String email, String password) async {
+    log('login dimulai');
     try {
-      var context = buildContext!.value;
+      log('login asu');
+      // var context = buildContext!.value;
+
+      log('login KIH ASTAGA');
+
       UserCredential myUser = await auth.signInWithEmailAndPassword(
           email: email, password: password);
 
       if (myUser.user!.emailVerified) {
         isAuth.value = true;
-        await readUser();
+        await apiC.getDataUserCondition(email);
 
         Get.dialog(
           dialogAlertOnly(
@@ -325,11 +418,13 @@ class AuthController extends GetxController {
   }
 
   Future signInGoogle() async {
-    var context = buildContext!.value;
+    // var context = buildContext!.value;
     await _googleSignIn.signOut();
 
     _currentUser =
         await _googleSignIn.signIn().then((value) => _currentUser = value);
+
+    log("Login google ges");
 
     final isSignIn = await _googleSignIn.isSignedIn();
 
@@ -347,34 +442,23 @@ class AuthController extends GetxController {
 
       log("$userCredential");
 
-      //inisiasi collection yg akan dipakai
-      var users = firestore.collection("users");
-
       String emailUser = auth.currentUser!.email.toString();
 
-      final docRef = users.doc(emailUser);
-      final checkData = await docRef.get();
+      apiC.getDataUserCondition(emailUser);
 
-      if (checkData.exists == false) {
-        users.doc(emailUser).set({
-          "uid": auth.currentUser!.uid,
-          "photoUrl": _currentUser!.photoUrl ?? '',
-          "email": emailUser,
-          "roles": 'user',
-          "noKTP": '',
-          "username": _currentUser!.displayName ?? '',
-          "namaLengkap": '',
-          "nomorTelepon": '',
-          "alamat": '',
-        });
+      if (apiC.dataUserModel.value.email == null ||
+          apiC.dataUserModel.value.email != emailUser) {
+        apiC.postUsers(
+            username: _currentUser!.displayName ?? '',
+            email: emailUser,
+            namaLengkap: '',
+            noKTP: '',
+            noTelp: '',
+            alamat: '',
+            uid: auth.currentUser!.uid,
+            fotoUrl: _currentUser!.photoUrl ?? '');
 
         isAuth.value = true;
-
-        await readUser();
-
-        if (kDebugMode) {
-          print("ROLES GUA APA? ROLES GUA ADLAAH : ${userData.value.roles}");
-        }
 
         Get.dialog(
           dialogAlertOnly(
@@ -391,18 +475,14 @@ class AuthController extends GetxController {
 
         await Get.offAllNamed(Routes.HOME);
       } else {
-        users.doc(emailUser).update({
-          "uid": auth.currentUser!.uid,
-          "photoUrl": _currentUser!.photoUrl ?? '',
-          "username": _currentUser!.displayName ?? '',
-        });
+        apiC.postUsers(
+            username: _currentUser!.displayName ?? '',
+            email: emailUser,
+            uid: auth.currentUser!.uid,
+            fotoUrl: _currentUser!.photoUrl ?? '');
+
         isAuth.value = true;
 
-        await readUser();
-
-        if (kDebugMode) {
-          print("ROLES GUA APA? ROLES GUA ADLAAH : ${userData.value.roles}");
-        }
         Get.dialog(
           dialogAlertOnly(
             animationLink: 'assets/lottie/loading_aztravel.json',
@@ -418,6 +498,62 @@ class AuthController extends GetxController {
 
         await Get.offAllNamed(Routes.HOME);
       }
+
+      //inisiasi collection yg akan dipakai
+      // var users = firestore.collection("users");
+
+      // final docRef = users.doc(emailUser);
+      // final checkData = await docRef.get();
+
+      // if (checkData.exists == false) {
+      //   // users.doc(emailUser).set({
+      //   //   "uid": auth.currentUser!.uid,
+      //   //   "photoUrl": _currentUser!.photoUrl ?? '',
+      //   //   "email": emailUser,
+      //   //   "roles": 'user',
+      //   //   "noKTP": '',
+      //   //   "username": _currentUser!.displayName ?? '',
+      //   //   "namaLengkap": '',
+      //   //   "nomorTelepon": '',
+      //   //   "alamat": '',
+      //   // });
+
+      //   // isAuth.value = true;
+
+      //   // await readUser();
+
+      //   if (kDebugMode) {
+      //     print("ROLES GUA APA? ROLES GUA ADLAAH : ${userData.value.roles}");
+      //   }
+
+      // } else {
+      //   users.doc(emailUser).update({
+      //     "uid": auth.currentUser!.uid,
+      //     "photoUrl": _currentUser!.photoUrl ?? '',
+      //     "username": _currentUser!.displayName ?? '',
+      //   });
+      //   isAuth.value = true;
+
+      //   await readUser();
+
+      //   if (kDebugMode) {
+      //     print("ROLES GUA APA? ROLES GUA ADLAAH : ${userData.value.roles}");
+      //   }
+      //   Get.dialog(
+      //     dialogAlertOnly(
+      //       animationLink: 'assets/lottie/loading_aztravel.json',
+      //       text: "Memuat...",
+      //       textSub: "",
+      //       textAlert: getTextAlert(context),
+      //       textAlertSub: getTextAlertSub(context),
+      //     ),
+      //   );
+
+      //   await simulateDelay();
+      //   Get.back();
+
+      //   await Get.offAllNamed(Routes.HOME);
+      // }
     }
   }
 

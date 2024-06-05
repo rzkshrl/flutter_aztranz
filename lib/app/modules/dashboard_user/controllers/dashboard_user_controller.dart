@@ -46,7 +46,7 @@ class DashboardUserController extends GetxController
   @override
   void onInit() {
     super.onInit();
-    authC.readUser();
+    apiC.getDataUserCondition(authC.auth.currentUser!.email.toString());
     apiC.getDataMobil();
     // apiC.getDataMobil();
     // firestoreDataMobilList = firestore.collection('DataMobil').snapshots().map(

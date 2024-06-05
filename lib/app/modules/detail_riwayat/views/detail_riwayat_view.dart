@@ -1,4 +1,3 @@
-import 'package:az_travel/app/data/constants/string.dart';
 import 'package:az_travel/app/data/models/pesananmobilmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,7 +8,6 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../controller/api_controller.dart';
-import '../../../routes/app_pages.dart';
 import '../../../theme/theme.dart';
 import '../../../utils/button.dart';
 import '../controllers/detail_riwayat_controller.dart';
@@ -29,7 +27,7 @@ class DetailRiwayatView extends GetView<DetailRiwayatController> {
         dateFormatter.format(DateTime.parse(dataReservasi.tanggalPesanStart!));
     var dateEnd =
         dateFormatter.format(DateTime.parse(dataReservasi.tanggalPesanEnd!));
-    // var fotoMobilURL = dataMobil.fotoMobil!.replaceRange(7, 21, apiC.imageIP);
+    var fotoMobilURL = dataReservasi.fotoUrl!.replaceRange(7, 21, apiC.imageIP);
     return AnnotatedRegion(
       value: const SystemUiOverlayStyle(
         statusBarBrightness: Brightness.dark,
@@ -55,7 +53,7 @@ class DetailRiwayatView extends GetView<DetailRiwayatController> {
                     },
                     blendMode: BlendMode.dstOut,
                     child: Image.network(
-                      defaultImage,
+                      fotoMobilURL,
                       width: 100.w,
                       fit: BoxFit.contain,
                     ),

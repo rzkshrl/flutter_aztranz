@@ -8,6 +8,7 @@ class DataMobilModel {
   String? tahun;
   String? deskripsi;
   String? fotoMobil;
+  String? status;
 
   DataMobilModel({
     this.id,
@@ -19,6 +20,7 @@ class DataMobilModel {
     this.tahun,
     this.deskripsi,
     this.fotoMobil,
+    this.status,
   });
 
   factory DataMobilModel.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,7 @@ class DataMobilModel {
       tahun: json['tahun'],
       deskripsi: json['deskripsi'],
       fotoMobil: json['foto_url'],
+      status: json['status'],
     );
   }
 }

@@ -1,8 +1,11 @@
 // ignore_for_file: invalid_use_of_protected_member
 
+import 'dart:developer';
+
 import 'package:az_travel/app/data/constants/string.dart';
 import 'package:az_travel/app/data/models/datamobilmodel.dart';
 import 'package:az_travel/app/data/models/pesananmobilmodel.dart';
+import 'package:az_travel/app/data/models/usermodel.dart';
 import 'package:az_travel/app/utils/loading.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -130,7 +133,8 @@ class APIController extends GetxController {
       String noKTP,
       String telepon,
       String tanggalPesanStart,
-      String tanggalPesanEnd) async {
+      String tanggalPesanEnd,
+      String fotoUrl) async {
     try {
       isLoading.value = true;
 
@@ -146,6 +150,7 @@ class APIController extends GetxController {
         'telepon': telepon,
         'tanggalpesan_start': tanggalPesanStart,
         'tanggalpesan_end': tanggalPesanEnd,
+        'foto_url': fotoUrl,
       };
 
       var res = await dio.post(
@@ -157,7 +162,7 @@ class APIController extends GetxController {
         debugPrint('hasil response: ${res.data}');
       }
 
-      if (res.data['message'] == 'success') {
+      if (res.statusCode == 200) {
         debugPrint('Pesanan terkirim ke server');
         snapToken = res.data['snap_token'];
 
@@ -174,5 +179,94 @@ class APIController extends GetxController {
         Get.snackbar('Error', 'Terjadi kesalahan.');
       }
     }
+  }
+
+  var dataUserModel = UserSQLModel().obs;
+
+  Future<void> postUsers(
+      {required String username,
+      required String email,
+      String? namaLengkap,
+      String? noKTP,
+      String? noTelp,
+      String? alamat,
+      required String uid,
+      required String fotoUrl}) async {
+    try {
+      isLoading.value = true;
+
+      String url = 'api/user/store/';
+      var data = {
+        "username": username,
+        "uid": uid,
+        "nama_lengkap": namaLengkap,
+        "email": email,
+        "alamat": alamat,
+        "no_ktp": noKTP,
+        "no_telp": noTelp,
+        "foto_url": fotoUrl,
+      };
+
+      var res = await dio.post(
+        url,
+        data: data,
+      );
+
+      if (kDebugMode) {
+        debugPrint('hasil response: ${res.data}');
+      }
+
+      if (res.statusCode == 200) {
+        debugPrint('User berhasil disimpan ke server');
+
+        isLoading.value = false;
+      } else {
+        Get.snackbar('Gagal', 'Terjadi kesalahan.');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('$e');
+        Get.snackbar('Error', 'Terjadi kesalahan.');
+      }
+    }
+  }
+
+  Future<UserSQLModel?> getDataUserCondition(String email) async {
+    try {
+      isLoading.value = true;
+
+      String url = 'api/user/';
+
+      var res = await dio.get(url);
+
+      if (res.statusCode == 200) {
+        log('get data user berhasil');
+        var jsonData = res.data['data'] as List;
+
+        // Seleksi data berdasarkan email
+        var userData = jsonData.firstWhere(
+          (item) => item['email'] == email.toLowerCase(),
+          orElse: () => '',
+        );
+
+        isLoading.value = false;
+
+        // Jika user ditemukan, konversi ke UserSQLModel
+        if (userData != null) {
+          return dataUserModel.value = UserSQLModel.fromJson(userData);
+        } else {
+          return null;
+        }
+      } else {
+        throw Exception('Gagal, terjadi kesalahan');
+        // Get.snackbar('Gagal', 'Terjadi kesalahan.');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('$e');
+        Get.snackbar('Gagal', 'Terjadi kesalahan.');
+      }
+    }
+    return null;
   }
 }

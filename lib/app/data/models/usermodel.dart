@@ -38,3 +38,41 @@ class UserModel {
     );
   }
 }
+
+class UserSQLModel {
+  int? idUser;
+  String? uid;
+  String? photoUrl;
+  String? email;
+  String? noKTP;
+  String? username;
+  String? namaLengkap;
+  String? nomorTelepon;
+  String? alamat;
+
+  UserSQLModel({
+    this.idUser,
+    this.uid,
+    this.photoUrl,
+    this.email,
+    this.noKTP,
+    this.username,
+    this.namaLengkap,
+    this.nomorTelepon,
+    this.alamat,
+  });
+
+  factory UserSQLModel.fromJson(Map<String, dynamic> json) {
+    return UserSQLModel(
+      idUser: json['id_user'],
+      uid: json['uid'],
+      photoUrl: json['foto_url'],
+      email: json['email'],
+      noKTP: json['no_ktp'],
+      username: json['username'],
+      namaLengkap: json['nama_lengkap'],
+      nomorTelepon: json['no_telp'],
+      alamat: json['alamat'],
+    );
+  }
+}
