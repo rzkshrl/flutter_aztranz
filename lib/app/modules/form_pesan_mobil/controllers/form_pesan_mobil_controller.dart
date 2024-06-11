@@ -1,10 +1,13 @@
-// ignore_for_file: unnecessary_overrides, avoid_print
+// ignore_for_file: unnecessary_overrides, avoid_print, use_build_context_synchronously
+
+import 'dart:developer';
 
 import 'package:az_travel/app/controller/api_controller.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:az_travel/app/modules/home/controllers/home_controller.dart';
+import 'package:az_travel/app/routes/app_pages.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -60,13 +63,11 @@ class FormPesanMobilController extends GetxController
     datePesanFormPesanC.text = '$startFormatted - $endFormatted';
   }
 
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-
   var apiC = Get.put(APIController());
 
-  Future<void> showLoading(dynamic) async {
+  Future<void> showLoading(dynamic, BuildContext context) async {
     Get.dialog(
-      dialogLoading(),
+      dialogLoading(context),
     );
     await dynamic;
     await Future.delayed(const Duration(milliseconds: 2500));
@@ -74,6 +75,8 @@ class FormPesanMobilController extends GetxController
       Get.back(); // Tutup dialog jika masih terbuka
     }
   }
+
+  var midtransC = Get.put(HomeController());
 
   Future<void> pesanMobilAPI(
     int idMobil,
@@ -84,6 +87,7 @@ class FormPesanMobilController extends GetxController
     String noTelpPemesan,
     String alamatPemesan,
     String fotoUrl,
+    BuildContext context,
   ) async {
     try {
       if (kDebugMode) {
@@ -93,21 +97,25 @@ class FormPesanMobilController extends GetxController
         print('Harga Mobil Total : $harga');
       }
       if (datePesanEnd.value != "") {
-        await showLoading(apiC.postDataReservasi(
-          idMobil,
-          namaMobil,
-          namaPemesan,
-          alamatPemesan,
-          harga,
-          noKTPPemesan,
-          noTelpPemesan,
-          datePesanStart.value,
-          datePesanEnd.value,
-          fotoUrl,
-        ));
+        await showLoading(
+          apiC.postDataReservasi(
+            idMobil,
+            namaMobil,
+            namaPemesan,
+            alamatPemesan,
+            harga,
+            noKTPPemesan,
+            noTelpPemesan,
+            datePesanStart.value,
+            datePesanEnd.value,
+            fotoUrl,
+          ),
+          context,
+        );
 
-        await midtrans?.startPaymentUiFlow(token: apiC.snapToken);
+        await midtrans!.startPaymentUiFlow(token: apiC.snapToken);
 
+        Get.back();
         Get.back();
         Get.back();
       } else {
@@ -116,8 +124,8 @@ class FormPesanMobilController extends GetxController
             animationLink: 'assets/lottie/warning_aztravel.json',
             text: "Terjadi Kesalahan!",
             textSub: "Lengkapi form.",
-            textAlert: getTextAlert(Get.context!),
-            textAlertSub: getTextAlertSub(Get.context!),
+            textAlert: getTextAlert(context),
+            textAlertSub: getTextAlertSub(context),
           ),
         );
       }
@@ -130,8 +138,8 @@ class FormPesanMobilController extends GetxController
           animationLink: 'assets/lottie/warning_aztravel.json',
           text: "Terjadi Kesalahan!",
           textSub: "Pesanan gagal.",
-          textAlert: getTextAlert(Get.context!),
-          textAlertSub: getTextAlertSub(Get.context!),
+          textAlert: getTextAlert(context),
+          textAlertSub: getTextAlertSub(context),
         ),
       );
     }
@@ -181,16 +189,22 @@ class FormPesanMobilController extends GetxController
   //   }
   // }
 
-  var midtransClientKey = 'SB-Mid-client-v5tvPUprZj2vnXgJ';
-  var midtransSrc = 'https://app.sandbox.midtrans.com/snap/v1/transactions';
+  late final AnimationController cAniBayarSekarang;
+  bool isBayarSekarangClicked = false;
+
+  // var midtransClientKey = 'SB-Mid-client-v5tvPUprZj2vnXgJ';
+  var midtransSrc = 'https://app.sandbox.midtrans.com/snap/v2/';
 
   late final MidtransSDK? midtrans;
 
+  var resultMidtrans = TransactionResult().obs;
+
   void initSDK() async {
+    log('midtrans init');
     midtrans = await MidtransSDK.init(
       config: MidtransConfig(
         clientKey: dot_env.dotenv.env['MIDTRANS_CLIENT_KEY'] ?? "",
-        merchantBaseUrl: "",
+        merchantBaseUrl: midtransSrc,
         colorTheme: ColorTheme(
           colorPrimary: Colors.blue,
           colorPrimaryDark: Colors.blue,
@@ -198,32 +212,62 @@ class FormPesanMobilController extends GetxController
         ),
       ),
     );
-    midtrans?.setUIKitCustomSetting(
-      showPaymentStatus: true,
+    midtrans!.setUIKitCustomSetting(
+      // showPaymentStatus: true,
       skipCustomerDetailsPages: true,
     );
-    midtrans!.setTransactionFinishedCallback((result) {
-      _showToast('Transaction Completed', false);
+    midtrans!.setTransactionFinishedCallback((result) async {
+      log('PESANAN BERHASIL DAN DIBAYAR lewat showPaymentStatus di form controller');
 
-      Get.back();
-      Get.back();
-      Get.back();
+      resultMidtrans.value = result;
+
+      if (result.isTransactionCanceled == true) {
+        Get.dialog(
+          dialogAlertOnly(
+            animationLink: 'assets/lottie/warning_aztravel.json',
+            text: "Pembayaran dibatalkan",
+            textSub: "Lanjutkan pembayaran di menu Riwayat.",
+            textAlert: getTextAlert(Get.context!),
+            textAlertSub: getTextAlertSub(Get.context!),
+          ),
+        );
+      } else {
+        print(result.statusMessage);
+        if (result.transactionStatus == TransactionResultStatus.settlement) {
+          await apiC.updateStatusReservasi(
+              apiC.hasilResponseDataReservasi.value.idReservasi!);
+          await apiC.postDataMobilStatus(
+              apiC.hasilResponseDataReservasi.value.mobilId!);
+          await apiC.getDetailReservasiSingle(
+              apiC.hasilResponseDataReservasi.value.idReservasi!);
+
+          await Get.toNamed(Routes.DETAIL_RIWAYAT,
+              arguments: apiC.hasilReservasiNow.value);
+          showToast('Transaction Completed', false);
+        } else if (result.transactionStatus! == TransactionResultStatus.deny) {
+          Get.dialog(
+            dialogAlertOnly(
+              animationLink: 'assets/lottie/warning_aztravel.json',
+              text: "Pembayaran gagal",
+              textSub: "Silahkan ulangi pembayaran.",
+              textAlert: getTextAlert(Get.context!),
+              textAlertSub: getTextAlertSub(Get.context!),
+            ),
+          );
+        } else {
+          Get.dialog(
+            dialogAlertOnly(
+              animationLink: 'assets/lottie/warning_aztravel.json',
+              text: "Pembayaran gagal",
+              textSub: "Terjadi kesalahan.",
+              textAlert: getTextAlert(Get.context!),
+              textAlertSub: getTextAlertSub(Get.context!),
+            ),
+          );
+        }
+      }
     });
   }
-
-  void _showToast(String msg, bool isError) {
-    Fluttertoast.showToast(
-        msg: msg,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: isError ? Colors.red : Colors.green,
-        textColor: Colors.white,
-        fontSize: 16.0);
-  }
-
-  late final AnimationController cAniBayarSekarang;
-  bool isBayarSekarangClicked = false;
 
   @override
   void onInit() {
@@ -242,7 +286,7 @@ class FormPesanMobilController extends GetxController
 
   @override
   void onClose() {
-    midtrans?.removeTransactionFinishedCallback();
+    // midtrans?.removeTransactionFinishedCallback();
     super.onClose();
   }
 }

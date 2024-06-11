@@ -17,10 +17,10 @@ class DetailRiwayatView extends GetView<DetailRiwayatController> {
   @override
   Widget build(BuildContext context) {
     final dataReservasi = Get.arguments as DataReservasiModel;
+    final apiC = Get.put(APIController());
     final formatCurrency =
         NumberFormat.simpleCurrency(locale: 'id_ID', decimalDigits: 0);
     int harga = int.parse(dataReservasi.harga!);
-    final apiC = Get.put(APIController());
 
     final dateFormatter = DateFormat('d MMMM yyyy', 'id-ID');
     var dateStart =
@@ -65,7 +65,7 @@ class DetailRiwayatView extends GetView<DetailRiwayatController> {
                       children: [
                         InkWell(
                           onTap: () {
-                            Get.back();
+                            Get.back(closeOverlays: true);
                           },
                           child: Icon(
                             PhosphorIconsBold.arrowLeft,
@@ -241,55 +241,89 @@ class DetailRiwayatView extends GetView<DetailRiwayatController> {
                     SizedBox(
                       height: 0.5.h,
                     ),
-                    Row(
-                      children: [
-                        Text(
-                          'Belum Dibayar',
-                          style: Theme.of(context)
-                              .textTheme
-                              .displayMedium!
-                              .copyWith(
-                                fontSize: 13.sp,
-                                height: 1,
-                                fontWeight: FontWeight.w600,
+                    dataReservasi.status == 'Belum Bayar'
+                        ? Row(
+                            children: [
+                              Text(
+                                'Belum Dibayar',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .displayMedium!
+                                    .copyWith(
+                                      fontSize: 13.sp,
+                                      height: 1,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                               ),
-                        ),
-                        SizedBox(
-                          width: 2.w,
-                        ),
-                        const Icon(PhosphorIconsBold.xCircle),
-                      ],
-                    ),
+                              SizedBox(
+                                width: 2.w,
+                              ),
+                              const Icon(PhosphorIconsBold.xCircle),
+                            ],
+                          )
+                        : Row(
+                            children: [
+                              Text(
+                                'Sudah Dibayar',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .displayMedium!
+                                    .copyWith(
+                                      fontSize: 13.sp,
+                                      height: 1,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
+                              SizedBox(
+                                width: 2.w,
+                              ),
+                              const Icon(PhosphorIconsBold.checkCircle),
+                            ],
+                          ),
                     SizedBox(
                       height: 4.h,
                     ),
-                    Center(
-                      child: buttonNoIcon(
-                        onTap: () {
-                          controller.cAniBayarSekarang.forward();
-                          Future.delayed(const Duration(milliseconds: 70), () {
-                            controller.cAniBayarSekarang.reverse();
-                          });
-                          Future.delayed(const Duration(milliseconds: 120))
-                              .then((value) {
-                            // Get.toNamed(Routes.FORM_PESAN_MOBIL,
-                            //     arguments: dataMobil);
-                          });
-                        },
-                        animationController: controller.cAniBayarSekarang,
-                        onLongPressEnd: (details) async {
-                          await controller.cAniBayarSekarang.forward();
-                          await controller.cAniBayarSekarang.reverse();
-                          // await Get.toNamed(Routes.FORM_PESAN_MOBIL,
-                          //     arguments: dataMobil);
-                        },
-                        elevation: 0,
-                        btnColor: yellow1_F9B401,
-                        width: 100.w,
-                        text: 'Bayar Sekarang',
-                        textColor: black,
-                      ),
-                    ),
+                    dataReservasi.status == 'Belum Bayar'
+                        ? Center(
+                            child: buttonNoIcon(
+                              onTap: () {
+                                controller.cAniBayarSekarang.forward();
+                                Future.delayed(const Duration(milliseconds: 70),
+                                    () {
+                                  controller.cAniBayarSekarang.reverse();
+                                });
+                                Future.delayed(
+                                        const Duration(milliseconds: 120))
+                                    .then((value) {
+                                  controller.pesanMobilAPI(
+                                      dataReservasi.mobilId!,
+                                      dataReservasi.harga!,
+                                      dataReservasi.namaMobil!,
+                                      dataReservasi.namaPemesan!,
+                                      dataReservasi.noKTPPemesan!,
+                                      dataReservasi.noTelpPemesan!,
+                                      dataReservasi.alamatPemesan!,
+                                      dataReservasi.tanggalPesanStart!,
+                                      dataReservasi.tanggalPesanEnd!,
+                                      dataReservasi.fotoUrl!,
+                                      context);
+                                });
+                              },
+                              animationController: controller.cAniBayarSekarang,
+                              onLongPressEnd: (details) async {
+                                await controller.cAniBayarSekarang.forward();
+                                await controller.cAniBayarSekarang.reverse();
+                                // await Get.toNamed(Routes.FORM_PESAN_MOBIL,
+                                //     arguments: dataMobil);
+                              },
+                              elevation: 0,
+                              btnColor: yellow1_F9B401,
+                              width: 100.w,
+                              text: 'Bayar Sekarang',
+                              textColor: black,
+                            ),
+                          )
+                        : Container(),
                     SizedBox(
                       height: 2.h,
                     ),

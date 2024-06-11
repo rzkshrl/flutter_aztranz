@@ -1,4 +1,3 @@
-import 'package:az_travel/app/controller/auth_controller.dart';
 import 'package:az_travel/app/modules/dashboard_user/views/dashboard_user_view.dart';
 import 'package:az_travel/app/modules/profile_user/views/profile_user_view.dart';
 import 'package:az_travel/app/modules/riwayat_user/views/riwayat_user_view.dart';
@@ -9,15 +8,17 @@ import 'package:get/get.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../../controller/api_controller.dart';
 import '../../../routes/app_pages.dart';
 import '../../../theme/theme.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    Get.put(AuthController());
+    Get.put(APIController());
 
     return FutureBuilder(
         future: simulateDelay(),
@@ -31,6 +32,7 @@ class HomeView extends GetView<HomeController> {
             const RiwayatUserView(),
             const ProfileUserView(),
           ];
+
           return Scaffold(
             body: Obx(() => pagesUser[controller.currentIndex2.value]),
             bottomNavigationBar: Container(
@@ -54,74 +56,6 @@ class HomeView extends GetView<HomeController> {
             ),
           );
         });
-  }
-
-  Widget navBarItem(BuildContext context, IconData icon, String text, int index,
-      AnimationController animationController) {
-    final controller = Get.put(HomeController());
-    return GestureDetector(
-        onTap: () {
-          animationController.forward();
-          Future.delayed(const Duration(milliseconds: 70), () {
-            animationController.reverse();
-          });
-          Future.delayed(const Duration(milliseconds: 120)).then((value) {
-            controller.changePage(index);
-          });
-        },
-        onLongPressDown: (details) {
-          animationController.forward();
-        },
-        onLongPressEnd: (details) async {
-          await animationController.forward();
-          await animationController.reverse();
-          await Get.offAllNamed(Routes.HOME);
-        },
-        child: AnimatedBuilder(
-          animation: animationController,
-          builder: (context, child) {
-            return ScaleTransition(
-              scale: Tween(begin: 1.0, end: 0.90).animate(animationController),
-              child: child,
-            );
-          },
-          child: SizedBox(
-            height: 81,
-            child: Obx(
-              () => Padding(
-                padding: EdgeInsets.only(top: 1.8.h),
-                child: SizedBox(
-                  width: 20.w,
-                  child: Column(
-                    children: [
-                      Icon(
-                        icon,
-                        size: 8.w,
-                        color: (index == controller.currentIndex.value ||
-                                Get.currentRoute == Routes.DASHBOARD)
-                            ? black
-                            : black.withOpacity(0.4),
-                      ),
-                      Text(
-                        text,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium!
-                            .copyWith(
-                              fontSize: 9.sp,
-                              color: (index == controller.currentIndex.value ||
-                                      Get.currentRoute == Routes.DASHBOARD)
-                                  ? black
-                                  : black.withOpacity(0.4),
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ));
   }
 
   Widget navBarItem2(BuildContext context, IconData icon, String text,

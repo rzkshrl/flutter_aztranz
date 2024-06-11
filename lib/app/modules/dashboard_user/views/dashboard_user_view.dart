@@ -20,7 +20,9 @@ class DashboardUserView extends GetView<DashboardUserController> {
     final c = Get.put(DashboardUserController());
     final apiC = Get.put(APIController());
     apiC.getDataMobil();
-    Get.put(AuthController());
+
+    final authC = Get.put(AuthController());
+    apiC.getDataUserCondition(authC.auth.currentUser!.email.toString());
 
     // add scrollcontroller to listen scroll activity for appbar
     final ScrollController scrollController = ScrollController();
@@ -228,8 +230,13 @@ class DashboardUserView extends GetView<DashboardUserController> {
                                       onLongPressEnd: (details) async {
                                         await c.cAniDashboardCategories[index]!
                                             .reverse();
-                                        await Get.toNamed(Routes.DETAIL_MOBIL,
-                                            arguments: dataMobil);
+                                        if (dataMobil.status !=
+                                            'Tidak Tersedia') {
+                                          await Get.toNamed(Routes.DETAIL_MOBIL,
+                                              arguments: dataMobil);
+                                        } else {
+                                          null;
+                                        }
                                       },
                                       child: InkWell(
                                         highlightColor: Colors.transparent,
@@ -244,8 +251,13 @@ class DashboardUserView extends GetView<DashboardUserController> {
                                             c.cAniDashboardCategories[index]!
                                                 .reverse();
                                           });
-                                          Get.toNamed(Routes.DETAIL_MOBIL,
-                                              arguments: dataMobil);
+                                          if (dataMobil.status !=
+                                              'Tidak Tersedia') {
+                                            Get.toNamed(Routes.DETAIL_MOBIL,
+                                                arguments: dataMobil);
+                                          } else {
+                                            null;
+                                          }
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(
@@ -266,12 +278,40 @@ class DashboardUserView extends GetView<DashboardUserController> {
                                                   topRight: Radius.circular(20),
                                                 ),
                                                 child: Center(
-                                                  child: Image.network(
-                                                    fotoMobilURL,
-                                                    fit: BoxFit.cover,
-                                                    width: 50.w,
-                                                    height: 22.h,
-                                                  ),
+                                                  child: dataMobil.status !=
+                                                          "Tidak Tersedia"
+                                                      ? Image.network(
+                                                          fotoMobilURL,
+                                                          fit: BoxFit.cover,
+                                                          width: 50.w,
+                                                          height: 22.h,
+                                                        )
+                                                      : Stack(
+                                                          alignment:
+                                                              Alignment.center,
+                                                          children: [
+                                                            Opacity(
+                                                              opacity: 0.3,
+                                                              child:
+                                                                  Image.network(
+                                                                fotoMobilURL,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                                width: 50.w,
+                                                                height: 22.h,
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              'Tidak Tersedia',
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize:
+                                                                      10.sp),
+                                                            )
+                                                          ],
+                                                        ),
                                                 ),
                                               ),
                                               Padding(
@@ -361,10 +401,16 @@ class DashboardUserView extends GetView<DashboardUserController> {
                                                                   index]!
                                                               .reverse();
                                                         });
-                                                        Get.toNamed(
-                                                            Routes.DETAIL_MOBIL,
-                                                            arguments:
-                                                                dataMobil);
+                                                        if (dataMobil.status !=
+                                                            'Tidak Tersedia') {
+                                                          Get.toNamed(
+                                                              Routes
+                                                                  .DETAIL_MOBIL,
+                                                              arguments:
+                                                                  dataMobil);
+                                                        } else {
+                                                          null;
+                                                        }
                                                       },
                                                       child: Row(
                                                         children: [

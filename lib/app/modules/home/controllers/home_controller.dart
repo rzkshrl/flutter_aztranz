@@ -1,7 +1,9 @@
+import 'package:az_travel/app/controller/api_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class HomeController extends GetxController with GetTickerProviderStateMixin {
+class HomeController extends GetxController
+    with GetTickerProviderStateMixin, WidgetsBindingObserver {
   var currentIndex = 0.obs;
   changePage(int i) {
     currentIndex.value = i;
@@ -21,9 +23,18 @@ class HomeController extends GetxController with GetTickerProviderStateMixin {
   late final AnimationController cAniProfileUser;
   bool isProfileUserClicked = false;
 
+  var apiC = Get.put(APIController());
+  // var midtransC = Get.put(FormPesanMobilController());
+
+  void fetchData() async {
+    apiC.getDataMobil();
+    apiC.getDataReservasi();
+  }
+
   @override
   void onInit() {
     super.onInit();
+    WidgetsBinding.instance.addObserver(this);
 
     cAniDashboardUser = AnimationController(
       vsync: this,
@@ -37,5 +48,12 @@ class HomeController extends GetxController with GetTickerProviderStateMixin {
       vsync: this,
       duration: const Duration(milliseconds: 70),
     );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      fetchData();
+    }
   }
 }

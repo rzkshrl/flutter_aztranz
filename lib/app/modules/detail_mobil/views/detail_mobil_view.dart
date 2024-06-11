@@ -66,7 +66,7 @@ class DetailMobilView extends GetView<DetailMobilController> {
                       children: [
                         InkWell(
                           onTap: () {
-                            Get.back();
+                            Get.back(closeOverlays: true);
                           },
                           child: Icon(
                             PhosphorIconsBold.arrowLeft,

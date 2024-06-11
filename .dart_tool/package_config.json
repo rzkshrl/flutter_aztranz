@@ -20,6 +20,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "app_links",
+      "rootUri": "file:///Users/fullrex/.pub-cache/hosted/pub.dev/app_links-6.1.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
       "name": "archive",
       "rootUri": "file:///Users/fullrex/.pub-cache/hosted/pub.dev/archive-3.6.1",
       "packageUri": "lib/",
@@ -384,6 +390,12 @@
       "rootUri": "file:///Users/fullrex/.pub-cache/hosted/pub.dev/google_sign_in_web-0.12.4",
       "packageUri": "lib/",
       "languageVersion": "3.3"
+    },
+    {
+      "name": "gtk",
+      "rootUri": "file:///Users/fullrex/.pub-cache/hosted/pub.dev/gtk-2.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
     },
     {
       "name": "hexcolor",
@@ -824,7 +836,7 @@
       "languageVersion": "3.2"
     }
   ],
-  "generated": "2024-06-05T13:07:28.965905Z",
+  "generated": "2024-06-05T14:53:35.925073Z",
   "generator": "pub",
   "generatorVersion": "3.3.3"
 }

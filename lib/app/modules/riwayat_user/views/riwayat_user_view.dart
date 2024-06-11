@@ -316,7 +316,8 @@ class RiwayatUserView extends GetView<RiwayatUserController> {
                                                           height: 0.5.h,
                                                         ),
                                                         Text(
-                                                          'Belum Dibayar',
+                                                          dataRiwayatReservasi
+                                                              .status!,
                                                           style: Theme.of(
                                                                   context)
                                                               .textTheme

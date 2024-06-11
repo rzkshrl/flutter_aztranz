@@ -180,7 +180,8 @@ class FormPesanMobilView extends GetView<FormPesanMobilController> {
                                       null) {
                                     c.selectDatePesan(
                                         value.startDate!, value.endDate!);
-                                    Get.back();
+                                    // Get.back(closeOverlays: true);
+                                    Navigator.pop(context);
                                   } else {
                                     Get.dialog(
                                       dialogAlertOnly(
@@ -254,7 +255,8 @@ class FormPesanMobilView extends GetView<FormPesanMobilController> {
                                 c.noKtpFormPesanC.text,
                                 c.noTelpFormPesanC.text,
                                 c.alamatFormPesanC.text,
-                                dataMobil.fotoMobil!);
+                                dataMobil.fotoMobil!,
+                                context);
                           }
                         });
                       },
@@ -282,7 +284,9 @@ class FormPesanMobilView extends GetView<FormPesanMobilController> {
                               c.noKtpFormPesanC.text,
                               c.noTelpFormPesanC.text,
                               c.alamatFormPesanC.text,
-                              dataMobil.fotoMobil!);
+                              dataMobil.fotoMobil!,
+                              // ignore: use_build_context_synchronously
+                              context);
                         }
                       },
                       elevation: 0,

@@ -6,6 +6,7 @@ environment:
   sdk: ">=3.2.5 <4.0.0"
 
 dependencies:
+  app_links: ^6.1.1
   cloud_firestore: ^4.14.0
   cupertino_icons: ^1.0.2
   device_info_plus: ^9.1.2

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-package="com.example.atan_app"
+package="com.example.az_travel"
 xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -33,12 +33,19 @@ xmlns:tools="http://schemas.android.com/tools">
             <meta-data
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
-              />
+              /> 
+               <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
                 <action android:name="FLUTTER_NOTIFICATION_CLICK" />
     <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http" android:host="aztravelhanafi.000webhostapp.com" />
             </intent-filter>
         </activity>
         <activity

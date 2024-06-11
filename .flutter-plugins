@@ -1,4 +1,5 @@
 # This is a generated file; do not edit or check into version control.
+app_links=/Users/fullrex/.pub-cache/hosted/pub.dev/app_links-6.1.1/
 cloud_firestore=/Users/fullrex/.pub-cache/hosted/pub.dev/cloud_firestore-4.17.5/
 cloud_firestore_web=/Users/fullrex/.pub-cache/hosted/pub.dev/cloud_firestore_web-3.12.5/
 device_info_plus=/Users/fullrex/.pub-cache/hosted/pub.dev/device_info_plus-9.1.2/
@@ -22,6 +23,7 @@ google_sign_in=/Users/fullrex/.pub-cache/hosted/pub.dev/google_sign_in-6.2.1/
 google_sign_in_android=/Users/fullrex/.pub-cache/hosted/pub.dev/google_sign_in_android-6.1.23/
 google_sign_in_ios=/Users/fullrex/.pub-cache/hosted/pub.dev/google_sign_in_ios-5.7.6/
 google_sign_in_web=/Users/fullrex/.pub-cache/hosted/pub.dev/google_sign_in_web-0.12.4/
+gtk=/Users/fullrex/.pub-cache/hosted/pub.dev/gtk-2.1.0/
 image_cropper=/Users/fullrex/.pub-cache/hosted/pub.dev/image_cropper-5.0.1/
 image_cropper_for_web=/Users/fullrex/.pub-cache/hosted/pub.dev/image_cropper_for_web-3.0.0/
 image_picker=/Users/fullrex/.pub-cache/hosted/pub.dev/image_picker-1.1.2/

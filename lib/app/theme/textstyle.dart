@@ -7,17 +7,29 @@ var context = Get.context!;
 
 getTextAlert(BuildContext context1) {
   return TextStyle(
-      color: Theme.of(context).textTheme.titleMedium!.color, fontSize: 12.sp);
+      color: Theme.of(context1).textTheme.titleMedium!.color, fontSize: 12.sp);
 }
 
 getTextAlertSub(BuildContext context1) {
   return TextStyle(
-      color: Theme.of(context).textTheme.titleMedium!.color, fontSize: 8.sp);
+      color: Theme.of(context1).textTheme.titleMedium!.color, fontSize: 8.sp);
 }
 
 getTextAlertBtn(BuildContext context1) {
   return TextStyle(
-      color: Theme.of(context).textTheme.titleMedium!.color, fontSize: 10.sp);
+      color: Theme.of(context1).textTheme.titleMedium!.color, fontSize: 10.sp);
+}
+
+getTextAlertHome() {
+  return TextStyle(color: black, fontSize: 12.sp);
+}
+
+getTextAlertSubHome() {
+  return TextStyle(color: black, fontSize: 8.sp);
+}
+
+getTextAlertBtnHome() {
+  return TextStyle(color: black, fontSize: 10.sp);
 }
 
 getTextErrorFormLogin() {

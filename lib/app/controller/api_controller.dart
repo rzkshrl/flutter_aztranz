@@ -1,4 +1,4 @@
-// ignore_for_file: invalid_use_of_protected_member
+// ignore_for_file: invalid_use_of_protected_member, use_build_context_synchronously
 
 import 'dart:developer';
 
@@ -7,12 +7,17 @@ import 'package:az_travel/app/data/models/datamobilmodel.dart';
 import 'package:az_travel/app/data/models/pesananmobilmodel.dart';
 import 'package:az_travel/app/data/models/usermodel.dart';
 import 'package:az_travel/app/utils/loading.dart';
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as dioo;
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:sizer/sizer.dart';
+
+import '../theme/textstyle.dart';
+import '../utils/dialog.dart';
 
 class APIController extends GetxController {
-  final dio = Dio(BaseOptions(
+  final dio = dioo.Dio(dioo.BaseOptions(
       baseUrl: EMULATOR_IP, headers: {"Access-Control-Allow-Origin": "*"}));
 
   var imageIP = EMULATOR;
@@ -44,12 +49,12 @@ class APIController extends GetxController {
         await simulateDelayShorter();
         isLoading.value = false;
       } else {
-        Get.snackbar('Gagal', 'Terjadi kesalahan.');
+        // Get.snackbar('Gagal', 'Terjadi kesalahan.');
       }
     } catch (e) {
       if (kDebugMode) {
         debugPrint('$e');
-        Get.snackbar('Gagal', 'Terjadi kesalahan.');
+        // Get.snackbar('Gagal', 'Terjadi kesalahan.');
       }
       throw Exception('Failed to load data');
     }
@@ -91,15 +96,19 @@ class APIController extends GetxController {
             .toList();
         dataReservasiModel.assignAll(dataReservasi);
         filteredDataReservasiModel.assignAll(dataReservasi);
+        dataReservasiModel
+            .sort((a, b) => b.idReservasi!.compareTo(a.idReservasi!));
+        filteredDataReservasiModel
+            .sort((a, b) => b.idReservasi!.compareTo(a.idReservasi!));
         await simulateDelayShorter();
         isLoading.value = false;
       } else {
-        Get.snackbar('Gagal', 'Terjadi kesalahan.');
+        // Get.snackbar('Gagal', 'Terjadi kesalahan.');
       }
     } catch (e) {
       if (kDebugMode) {
         debugPrint('$e');
-        Get.snackbar('Gagal', 'Terjadi kesalahan.');
+        // Get.snackbar('Gagal', 'Terjadi kesalahan.');
       }
       throw Exception('Failed to load data');
     }
@@ -123,6 +132,9 @@ class APIController extends GetxController {
   }
 
   var snapToken = '';
+
+  var hasilResponseDataReservasi = DataReservasiModel().obs;
+  var hasilReservasiNow = DataReservasiModel().obs;
 
   Future<void> postDataReservasi(
       int idMobil,
@@ -151,6 +163,7 @@ class APIController extends GetxController {
         'tanggalpesan_start': tanggalPesanStart,
         'tanggalpesan_end': tanggalPesanEnd,
         'foto_url': fotoUrl,
+        'status': "Belum Bayar",
       };
 
       var res = await dio.post(
@@ -165,20 +178,133 @@ class APIController extends GetxController {
       if (res.statusCode == 200) {
         debugPrint('Pesanan terkirim ke server');
         snapToken = res.data['snap_token'];
+        hasilResponseDataReservasi.value =
+            DataReservasiModel.fromJson(res.data['data']);
+        getDetailReservasiSingle(hasilResponseDataReservasi.value.idReservasi!);
 
         if (kDebugMode) {
           print('SNAP TOKEN: $snapToken');
         }
         isLoading.value = false;
       } else {
-        Get.snackbar('Gagal', 'Terjadi kesalahan.');
+        // Get.snackbar('Gagal', 'Terjadi kesalahan.');
       }
     } catch (e) {
       if (kDebugMode) {
         debugPrint('$e');
-        Get.snackbar('Error', 'Terjadi kesalahan.');
+        // Get.snackbar('Error', 'Terjadi kesalahan.');
       }
     }
+  }
+
+  Future<void> postDataMobilStatus(
+    int idMobil,
+  ) async {
+    try {
+      isLoading.value = true;
+
+      String url = 'api/mobil/store/';
+      var data = {
+        'id_mobil': idMobil,
+      };
+
+      var res = await dio.post(
+        url,
+        data: data,
+      );
+
+      if (kDebugMode) {
+        debugPrint('hasil response: ${res.data}');
+      }
+
+      if (res.statusCode == 200) {
+        debugPrint('Pesanan terkirim ke server');
+
+        if (kDebugMode) {
+          print('SNAP TOKEN: $snapToken');
+        }
+        isLoading.value = false;
+      } else {
+        // Get.snackbar('Gagal', 'Terjadi kesalahan.');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('$e');
+        // Get.snackbar('Error', 'Terjadi kesalahan.');
+      }
+    }
+  }
+
+  Future<void> updateStatusReservasi(int idReservasi) async {
+    try {
+      isLoading.value = true;
+
+      String url = 'api/reservasi/store/';
+      var data = {
+        'id_reservasi': idReservasi,
+      };
+
+      var res = await dio.post(
+        url,
+        data: data,
+      );
+
+      if (kDebugMode) {
+        debugPrint('hasil response: ${res.data}');
+      }
+
+      if (res.statusCode == 200) {
+        debugPrint('Pesanan dibayar');
+
+        isLoading.value = false;
+      } else {
+        // Get.snackbar('Gagal', 'Terjadi kesalahan.');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('$e');
+        // Get.snackbar('Error', 'Terjadi kesalahan.');
+      }
+    }
+  }
+
+  Future<DataReservasiModel?> getDetailReservasiSingle(int idReservasi) async {
+    try {
+      isLoading.value = true;
+
+      String url = 'api/reservasi/';
+
+      var res = await dio.get(url);
+
+      if (res.statusCode == 200) {
+        log('get data pesanan single berhasil');
+        var jsonData = res.data['data'] as List;
+
+        // Seleksi data berdasarkan id_reservasi
+        var item = jsonData.firstWhere(
+          (item) => item['id_reservasi'] == idReservasi,
+          orElse: () => '',
+        );
+
+        isLoading.value = false;
+
+        // Jika data ditemukan, konversi ke DataReservasiModel
+        if (item != null) {
+          return hasilReservasiNow.value = DataReservasiModel.fromJson(item);
+        } else {
+          return null;
+        }
+      } else {
+        throw Exception('Gagal, terjadi kesalahan');
+        // Get.snackbar('Gagal', 'Terjadi kesalahan.');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('$e');
+        // Get.snackbar('Gagal', 'Terjadi kesalahan.');
+      }
+    }
+    return null;
   }
 
   var dataUserModel = UserSQLModel().obs;
@@ -221,12 +347,151 @@ class APIController extends GetxController {
 
         isLoading.value = false;
       } else {
-        Get.snackbar('Gagal', 'Terjadi kesalahan.');
+        // Get.snackbar('Gagal', 'Terjadi kesalahan.');
       }
     } catch (e) {
       if (kDebugMode) {
         debugPrint('$e');
-        Get.snackbar('Error', 'Terjadi kesalahan.');
+        // Get.snackbar('Error', 'Terjadi kesalahan.');
+      }
+    }
+  }
+
+  Future<void> updateUsersWithImage(
+      {required String username,
+      required String email,
+      String? namaLengkap,
+      String? noKTP,
+      String? noTelp,
+      String? alamat,
+      String? uid,
+      XFile? imageFile}) async {
+    try {
+      isLoading.value = true;
+
+      String url = 'api/user/store/';
+
+      dioo.FormData formData = dioo.FormData.fromMap({
+        'foto_url': await dioo.MultipartFile.fromFile(
+          imageFile!.path,
+          filename: imageFile.name,
+        ),
+        "username": username,
+        "uid": uid,
+        "nama_lengkap": namaLengkap,
+        "email": email,
+        "alamat": alamat,
+        "no_ktp": noKTP,
+        "no_telp": noTelp, // Menambahkan data string lainnya
+      });
+
+      var res = await dio.post(
+        url,
+        data: formData,
+      );
+
+      if (kDebugMode) {
+        debugPrint('hasil response: ${res.data}');
+      }
+
+      if (res.statusCode == 200) {
+        debugPrint('User berhasil disimpan ke server');
+        Get.dialog(
+          dialogAlertBtn(
+            onPressed: () async {
+              Get.back();
+              Get.back();
+            },
+            animationLink: 'assets/lottie/finish_aztravel.json',
+            widthBtn: 26.w,
+            textBtn: "OK",
+            text: "Berhasil!",
+            textSub: "Data berhasil diubah.",
+            textAlert: getTextAlert(context),
+            textAlertSub: getTextAlertSub(context),
+            textAlertBtn: getTextAlertBtn(context),
+          ),
+        );
+        isLoading.value = false;
+      } else {
+        // Get.snackbar('Gagal', 'Terjadi kesalahan.');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('$e');
+        Get.dialog(
+          dialogAlertOnly(
+            animationLink: 'assets/lottie/warning_aztravel.json',
+            text: "Terjadi Kesalahan!",
+            textSub: "Data gagal diubah.",
+            textAlert: getTextAlert(Get.context!),
+            textAlertSub: getTextAlertSub(Get.context!),
+          ),
+        );
+        // Get.snackbar('Error', 'Terjadi kesalahan.');
+      }
+    }
+  }
+
+  Future<void> updateUsersWithoutImage({
+    required String username,
+    required String email,
+    String? namaLengkap,
+    String? noKTP,
+    String? noTelp,
+    String? alamat,
+    String? uid,
+  }) async {
+    try {
+      isLoading.value = true;
+
+      String url = 'api/user/store/';
+      var data = {
+        "username": username,
+        "uid": uid,
+        "nama_lengkap": namaLengkap,
+        "email": email,
+        "alamat": alamat,
+        "no_ktp": noKTP,
+        "no_telp": noTelp,
+      };
+
+      var res = await dio.post(
+        url,
+        data: data,
+      );
+
+      if (kDebugMode) {
+        debugPrint('hasil response: ${res.data}');
+      }
+
+      if (res.statusCode == 200) {
+        debugPrint('User berhasil disimpan ke server');
+        Get.dialog(
+          dialogAlertBtn(
+            onPressed: () async {
+              Get.back();
+              Get.back();
+            },
+            animationLink: 'assets/lottie/finish_aztravel.json',
+            widthBtn: 26.w,
+            textBtn: "OK",
+            text: "Berhasil!",
+            textSub: "Data berhasil diubah.",
+            textAlert: getTextAlert(context),
+            textAlertSub: getTextAlertSub(context),
+            textAlertBtn: getTextAlertBtn(context),
+          ),
+        );
+
+        isLoading.value = false;
+      } else {
+        // Get.snackbar('Gagal', 'Terjadi kesalahan.');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('$e');
+        // Get.snackbar('Error', 'Terjadi kesalahan.');
       }
     }
   }
@@ -264,7 +529,7 @@ class APIController extends GetxController {
     } catch (e) {
       if (kDebugMode) {
         debugPrint('$e');
-        Get.snackbar('Gagal', 'Terjadi kesalahan.');
+        // Get.snackbar('Gagal', 'Terjadi kesalahan.');
       }
     }
     return null;

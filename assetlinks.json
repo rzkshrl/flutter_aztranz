@@ -1,0 +1,5 @@
+[{
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target" : { "namespace": "android_app", "package_name": "com.example.az_travel",
+                 "sha256_cert_fingerprints": ["87:55:AC:2A:5A:2D:63:A9:56:CC:28:98:DA:95:C4:D6:85:EE:80:32:08:B5:40:DC:C0:1B:2F:D9:51:86:81:33"] }
+  }]

@@ -1,6 +1,5 @@
 import 'package:az_travel/app/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sizer/sizer.dart';
 
@@ -47,7 +46,7 @@ Widget loadingProp() {
   );
 }
 
-Widget dialogLoading() {
+Widget dialogLoading(BuildContext context) {
   return Dialog(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     backgroundColor: light,
@@ -73,7 +72,7 @@ Widget dialogLoading() {
           Text(
             'Memuat...',
             textAlign: TextAlign.center,
-            style: getTextAlert(Get.context!),
+            style: getTextAlert(context),
           ),
           const SizedBox(
             height: 5,

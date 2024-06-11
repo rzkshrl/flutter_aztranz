@@ -1,11 +1,8 @@
 // ignore_for_file: unnecessary_overrides, use_build_context_synchronously
 
-import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:az_travel/app/controller/api_controller.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
@@ -13,7 +10,6 @@ import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:sizer/sizer.dart';
 
 import '../../../theme/textstyle.dart';
 import '../../../theme/theme.dart';
@@ -37,11 +33,13 @@ class EditProfileController extends GetxController
 
   var context = Get.context!;
 
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-  FirebaseStorage storage = FirebaseStorage.instance;
+  // FirebaseFirestore firestore = FirebaseFirestore.instance;
+  // FirebaseStorage storage = FirebaseStorage.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
   ImagePicker picker = ImagePicker();
   XFile? image;
+
+  var apiC = Get.put(APIController());
 
   Future<void> pickImage() async {
     final plugin = DeviceInfoPlugin();
@@ -113,65 +111,59 @@ class EditProfileController extends GetxController
 
   Future<void> editProfil(String username, String namaLengkap, String noKTP,
       String nomorTelepon, String alamat) async {
-    try {
-      var email = auth.currentUser!.email;
-      var dataMobilReference = firestore.collection('users');
-      final docRef = dataMobilReference.doc(email);
+    var email = auth.currentUser!.email;
+    var uid = auth.currentUser!.uid;
+    // var dataMobilReference = firestore.collection('users');
+    // final docRef = dataMobilReference.doc(email);
 
-      if (image != null) {
-        File file = File(image!.path);
-        String ext = image!.name.split(".").last;
-
-        await storage.ref('datamobil/${docRef.id}.$ext').putFile(file);
-        String urlImage =
-            await storage.ref('datamobil/${docRef.id}.$ext').getDownloadURL();
-        await docRef.update({
-          'username': username,
-          'namaLengkap': namaLengkap,
-          'noKTP': noKTP,
-          'nomorTelepon': nomorTelepon,
-          'photoUrl': urlImage,
-          'alamat': alamat
-        });
-      } else {
-        await docRef.update({
-          'username': username,
-          'namaLengkap': namaLengkap,
-          'noKTP': noKTP,
-          'nomorTelepon': nomorTelepon,
-          'alamat': alamat
-        });
-      }
-
-      Get.dialog(
-        dialogAlertBtn(
-          onPressed: () async {
-            Get.back();
-            Get.back();
-          },
-          animationLink: 'assets/lottie/finish_aztravel.json',
-          widthBtn: 26.w,
-          textBtn: "OK",
-          text: "Berhasil!",
-          textSub: "Data berhasil diubah.",
-          textAlert: getTextAlert(context),
-          textAlertSub: getTextAlertSub(context),
-          textAlertBtn: getTextAlertBtn(context),
-        ),
-      );
-    } catch (e) {
+    if (image != null) {
+      // File file = File(image!.path);
+      // String ext = image!.name.split(".").last;
       if (kDebugMode) {
-        print(e);
+        print('ada gambar');
       }
-      Get.dialog(
-        dialogAlertOnly(
-          animationLink: 'assets/lottie/warning_aztravel.json',
-          text: "Terjadi Kesalahan!",
-          textSub: "Data gagal diubah.",
-          textAlert: getTextAlert(Get.context!),
-          textAlertSub: getTextAlertSub(Get.context!),
-        ),
+      apiC.updateUsersWithImage(
+        username: username,
+        namaLengkap: namaLengkap,
+        noKTP: noKTP,
+        noTelp: nomorTelepon,
+        alamat: alamat,
+        email: email!,
+        uid: uid,
+        imageFile: image,
       );
+
+      // await storage.ref('datamobil/${docRef.id}.$ext').putFile(file);
+      // String urlImage =
+      //     await storage.ref('datamobil/${docRef.id}.$ext').getDownloadURL();
+      // await docRef.update({
+      //   'username': username,
+      //   'namaLengkap': namaLengkap,
+      //   'noKTP': noKTP,
+      //   'nomorTelepon': nomorTelepon,
+      //   'photoUrl': urlImage,
+      //   'alamat': alamat
+      // });
+    } else {
+      if (kDebugMode) {
+        print('tidak ada gambar');
+      }
+      apiC.updateUsersWithoutImage(
+        username: username,
+        namaLengkap: namaLengkap,
+        noKTP: noKTP,
+        noTelp: nomorTelepon,
+        alamat: alamat,
+        email: email!,
+        uid: uid,
+      );
+      // await docRef.update({
+      //   'username': username,
+      //   'namaLengkap': namaLengkap,
+      //   'noKTP': noKTP,
+      //   'nomorTelepon': nomorTelepon,
+      //   'alamat': alamat
+      // });
     }
   }
 

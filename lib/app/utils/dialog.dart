@@ -1,5 +1,6 @@
 import 'package:az_travel/app/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sizer/sizer.dart';
 
@@ -126,4 +127,15 @@ Widget dialogAlertOnly({
       ),
     ),
   );
+}
+
+void showToast(String msg, bool isError) {
+  Fluttertoast.showToast(
+      msg: msg,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: isError ? Colors.red : Colors.green,
+      textColor: Colors.white,
+      fontSize: 16.0);
 }

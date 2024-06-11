@@ -2,7 +2,6 @@
 
 import 'package:az_travel/app/controller/api_controller.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:midtrans_sdk/midtrans_sdk.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -15,30 +14,30 @@ class PaymentController extends GetxController {
 
   late final MidtransSDK? midtrans;
 
-  void initSDK() async {
-    midtrans = await MidtransSDK.init(
-      config: MidtransConfig(
-        clientKey: midtransClientKey,
-        merchantBaseUrl: "https://app.sandbox.midtrans.com/snap/snap.js",
-        colorTheme: ColorTheme(
-          colorPrimary: Colors.blue,
-          colorPrimaryDark: Colors.blue,
-          colorSecondary: Colors.blue,
-        ),
-      ),
-    );
-    midtrans?.setUIKitCustomSetting(
-      skipCustomerDetailsPages: true,
-    );
-    midtrans!.setTransactionFinishedCallback((result) {
-      Get.snackbar('Berhasil', "Transaksi Berhasil");
-    });
-  }
+  // void initSDK() async {
+  //   midtrans = await MidtransSDK.init(
+  //     config: MidtransConfig(
+  //       clientKey: midtransClientKey,
+  //       merchantBaseUrl: "https://app.sandbox.midtrans.com/snap/snap.js",
+  //       colorTheme: ColorTheme(
+  //         colorPrimary: Colors.blue,
+  //         colorPrimaryDark: Colors.blue,
+  //         colorSecondary: Colors.blue,
+  //       ),
+  //     ),
+  //   );
+  //   midtrans?.setUIKitCustomSetting(
+  //     skipCustomerDetailsPages: true,
+  //   );
+  //   midtrans!.setTransactionFinishedCallback((result) {
+  //     Get.snackbar('Berhasil', "Transaksi Berhasil");
+  //   });
+  // }
 
   @override
   void onInit() {
     super.onInit();
-    initSDK();
+    // initSDK();
     if (kDebugMode) {
       print('SNAP TOKEN di payment: ${apiC.snapToken}');
     }
