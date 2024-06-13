@@ -22,7 +22,7 @@ Widget btnItem(
         Text(
           textBtn,
           textAlign: TextAlign.center,
-          style: getTextAlertSub(context),
+          style: getTextAlertSub(),
         )
       ],
     ),

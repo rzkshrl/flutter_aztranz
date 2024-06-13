@@ -83,8 +83,8 @@ class DetailRiwayatController extends GetxController
           animationLink: 'assets/lottie/warning_aztravel.json',
           text: "Terjadi Kesalahan!",
           textSub: "Pesanan gagal.",
-          textAlert: getTextAlert(context),
-          textAlertSub: getTextAlertSub(context),
+          textAlert: getTextAlert(),
+          textAlertSub: getTextAlertSub(),
         ),
       );
     }
@@ -125,8 +125,8 @@ class DetailRiwayatController extends GetxController
             animationLink: 'assets/lottie/warning_aztravel.json',
             text: "Pembayaran dibatalkan",
             textSub: "Lanjutkan pembayaran di menu Riwayat.",
-            textAlert: getTextAlert(Get.context!),
-            textAlertSub: getTextAlertSub(Get.context!),
+            textAlert: getTextAlert(),
+            textAlertSub: getTextAlertSub(),
           ),
         );
       } else {
@@ -148,8 +148,8 @@ class DetailRiwayatController extends GetxController
               animationLink: 'assets/lottie/warning_aztravel.json',
               text: "Pembayaran gagal",
               textSub: "Silahkan ulangi pembayaran.",
-              textAlert: getTextAlert(Get.context!),
-              textAlertSub: getTextAlertSub(Get.context!),
+              textAlert: getTextAlert(),
+              textAlertSub: getTextAlertSub(),
             ),
           );
         } else {
@@ -158,8 +158,8 @@ class DetailRiwayatController extends GetxController
               animationLink: 'assets/lottie/warning_aztravel.json',
               text: "Pembayaran gagal",
               textSub: "Terjadi kesalahan.",
-              textAlert: getTextAlert(Get.context!),
-              textAlertSub: getTextAlertSub(Get.context!),
+              textAlert: getTextAlert(),
+              textAlertSub: getTextAlertSub(),
             ),
           );
         }

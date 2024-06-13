@@ -92,8 +92,8 @@ class EditProfileController extends GetxController
           animationLink: 'assets/lottie/warning_aztravel.json',
           text: "Terjadi Kesalahan!",
           textSub: "Akses ke penyimpanan ditolak!",
-          textAlert: getTextAlert(context),
-          textAlertSub: getTextAlertSub(context),
+          textAlert: getTextAlert(),
+          textAlertSub: getTextAlertSub(),
         ),
       );
     } else {
@@ -102,8 +102,8 @@ class EditProfileController extends GetxController
           animationLink: 'assets/lottie/warning_aztravel.json',
           text: "Terjadi Kesalahan!",
           textSub: "Akses ke penyimpanan ditolak! {err}",
-          textAlert: getTextAlert(context),
-          textAlertSub: getTextAlertSub(context),
+          textAlert: getTextAlert(),
+          textAlertSub: getTextAlertSub(),
         ),
       );
     }

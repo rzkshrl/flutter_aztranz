@@ -5,19 +5,16 @@ import 'package:sizer/sizer.dart';
 
 var context = Get.context!;
 
-getTextAlert(BuildContext context1) {
-  return TextStyle(
-      color: Theme.of(context1).textTheme.titleMedium!.color, fontSize: 12.sp);
+getTextAlert() {
+  return TextStyle(color: black, fontSize: 12.sp);
 }
 
-getTextAlertSub(BuildContext context1) {
-  return TextStyle(
-      color: Theme.of(context1).textTheme.titleMedium!.color, fontSize: 8.sp);
+getTextAlertSub() {
+  return TextStyle(color: black, fontSize: 8.sp);
 }
 
-getTextAlertBtn(BuildContext context1) {
-  return TextStyle(
-      color: Theme.of(context1).textTheme.titleMedium!.color, fontSize: 10.sp);
+getTextAlertBtn() {
+  return TextStyle(color: black, fontSize: 10.sp);
 }
 
 getTextAlertHome() {

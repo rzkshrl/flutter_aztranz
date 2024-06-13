@@ -1,4 +1,4 @@
-// ignore_for_file: invalid_use_of_protected_member, use_build_context_synchronously
+// ignore_for_file: invalid_use_of_protected_member, use_build__synchronously
 
 import 'dart:developer';
 
@@ -17,13 +17,16 @@ import '../theme/textstyle.dart';
 import '../utils/dialog.dart';
 
 class APIController extends GetxController {
+  // inisiasi package dio untuk REST API
   final dio = dioo.Dio(dioo.BaseOptions(
       baseUrl: EMULATOR_IP, headers: {"Access-Control-Allow-Origin": "*"}));
 
+  // custom IP untuk gambar
   var imageIP = EMULATOR;
 
   var isLoading = false.obs;
 
+  // inisiasi model untuk tabel mobil dari SQL
   var dataMobilModel = <DataMobilModel>[].obs;
   var filteredDataMobil = <DataMobilModel>[].obs;
   var searchText = ''.obs;
@@ -74,6 +77,7 @@ class APIController extends GetxController {
     }
   }
 
+  // inisiasi model untuk tabel reservasi dari SQL
   var dataReservasiModel = <DataReservasiModel>[].obs;
   var filteredDataReservasiModel = <DataReservasiModel>[].obs;
   var searchTextHistory = ''.obs;
@@ -133,6 +137,7 @@ class APIController extends GetxController {
 
   var snapToken = '';
 
+  // inisiasi model untuk mengambil data tunggal dari tabel reservasi di SQL
   var hasilResponseDataReservasi = DataReservasiModel().obs;
   var hasilReservasiNow = DataReservasiModel().obs;
 
@@ -307,6 +312,7 @@ class APIController extends GetxController {
     return null;
   }
 
+  // inisiasi model untuk tabel users dari SQL, data tunggal untuk data user yang masuk saat ini
   var dataUserModel = UserSQLModel().obs;
 
   Future<void> postUsers(
@@ -407,9 +413,9 @@ class APIController extends GetxController {
             textBtn: "OK",
             text: "Berhasil!",
             textSub: "Data berhasil diubah.",
-            textAlert: getTextAlert(context),
-            textAlertSub: getTextAlertSub(context),
-            textAlertBtn: getTextAlertBtn(context),
+            textAlert: getTextAlert(),
+            textAlertSub: getTextAlertSub(),
+            textAlertBtn: getTextAlertBtn(),
           ),
         );
         isLoading.value = false;
@@ -424,8 +430,8 @@ class APIController extends GetxController {
             animationLink: 'assets/lottie/warning_aztravel.json',
             text: "Terjadi Kesalahan!",
             textSub: "Data gagal diubah.",
-            textAlert: getTextAlert(Get.context!),
-            textAlertSub: getTextAlertSub(Get.context!),
+            textAlert: getTextAlert(),
+            textAlertSub: getTextAlertSub(),
           ),
         );
         // Get.snackbar('Error', 'Terjadi kesalahan.');
@@ -478,9 +484,9 @@ class APIController extends GetxController {
             textBtn: "OK",
             text: "Berhasil!",
             textSub: "Data berhasil diubah.",
-            textAlert: getTextAlert(context),
-            textAlertSub: getTextAlertSub(context),
-            textAlertBtn: getTextAlertBtn(context),
+            textAlert: getTextAlert(),
+            textAlertSub: getTextAlertSub(),
+            textAlertBtn: getTextAlertBtn(),
           ),
         );
 

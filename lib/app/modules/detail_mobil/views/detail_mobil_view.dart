@@ -219,9 +219,9 @@ class DetailMobilView extends GetView<DetailMobilController> {
                                   text: "Profil belum lengkap!",
                                   textSub:
                                       "Lengkapi profil anda sebelum melakukan pesanan",
-                                  textAlert: getTextAlert(context),
-                                  textAlertSub: getTextAlertSub(context),
-                                  textAlertBtn: getTextAlertBtn(context),
+                                  textAlert: getTextAlert(),
+                                  textAlertSub: getTextAlertSub(),
+                                  textAlertBtn: getTextAlertBtn(),
                                 ),
                               );
                             } else {
@@ -251,9 +251,9 @@ class DetailMobilView extends GetView<DetailMobilController> {
                                 text: "Profil belum lengkap!",
                                 textSub:
                                     "Lengkapi profil anda sebelum melakukan pesanan",
-                                textAlert: getTextAlert(context),
-                                textAlertSub: getTextAlertSub(context),
-                                textAlertBtn: getTextAlertBtn(context),
+                                textAlert: getTextAlert(),
+                                textAlertSub: getTextAlertSub(),
+                                textAlertBtn: getTextAlertBtn(),
                               ),
                             );
                           } else {

@@ -24,7 +24,7 @@ class DashboardUserView extends GetView<DashboardUserController> {
     final authC = Get.put(AuthController());
     apiC.getDataUserCondition(authC.auth.currentUser!.email.toString());
 
-    // add scrollcontroller to listen scroll activity for appbar
+    // menambah scrollcontroller untuk memantau scroll activity -> appbar
     final ScrollController scrollController = ScrollController();
     scrollController.addListener(() {
       if (scrollController.offset > (125 - kToolbarHeight) &&
@@ -189,7 +189,7 @@ class DashboardUserView extends GetView<DashboardUserController> {
                                       crossAxisSpacing: 0,
                                       mainAxisSpacing: 0),
                               itemBuilder: (context, index) {
-                                // initiate animation and duration for animation each index
+                                // inisiasi animasi dan durasi animasi setiap index
                                 if (c.cAniDashboardCategories[index] == null) {
                                   c.cAniDashboardCategories[index] =
                                       AnimationController(

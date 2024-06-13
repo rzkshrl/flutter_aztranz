@@ -72,7 +72,7 @@ Widget dialogLoading(BuildContext context) {
           Text(
             'Memuat...',
             textAlign: TextAlign.center,
-            style: getTextAlert(context),
+            style: getTextAlert(),
           ),
           const SizedBox(
             height: 5,

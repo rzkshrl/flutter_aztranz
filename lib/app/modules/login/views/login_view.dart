@@ -71,28 +71,43 @@ class LoginView extends GetView<LoginController> {
                               SizedBox(
                                 height: 2.5.h,
                               ),
-                              formLogin(
-                                autofillHints: const [AutofillHints.email],
-                                key: controller.emailLoginKey.value,
-                                textEditingController: controller.emailC,
-                                hintText: 'Email',
-                                iconPrefix: PhosphorIconsFill.envelope,
-                                keyboardType: TextInputType.emailAddress,
-                                validator: controller.emailValidator,
-                                errorStatus: authC.errorStatusLoginEmail.value,
-                                errorText: authC.errorTextLoginEmail.value,
-                              ),
-                              formLoginPass(
-                                autofillHints: const [AutofillHints.password],
-                                key: controller.passLoginKey.value,
-                                textEditingController: controller.passC,
-                                hintText: 'Kata Sandi',
-                                iconPrefix: PhosphorIconsFill.key,
-                                keyboardType: TextInputType.visiblePassword,
-                                validator: controller.passValidator,
-                                hidePass: controller.isPasswordHidden,
-                                errorStatus: authC.errorStatusLoginEmail.value,
-                                errorText: authC.errorTextLoginEmail.value,
+                              Obx(
+                                () => Column(
+                                  children: [
+                                    formLogin(
+                                      autofillHints: const [
+                                        AutofillHints.email
+                                      ],
+                                      key: controller.emailLoginKey.value,
+                                      textEditingController: controller.emailC,
+                                      hintText: 'Email',
+                                      iconPrefix: PhosphorIconsFill.envelope,
+                                      keyboardType: TextInputType.emailAddress,
+                                      validator: controller.emailValidator,
+                                      errorStatus:
+                                          authC.errorStatusLoginEmail.value,
+                                      errorText:
+                                          authC.errorTextLoginEmail.value,
+                                    ),
+                                    formLoginPass(
+                                      autofillHints: const [
+                                        AutofillHints.password
+                                      ],
+                                      key: controller.passLoginKey.value,
+                                      textEditingController: controller.passC,
+                                      hintText: 'Kata Sandi',
+                                      iconPrefix: PhosphorIconsFill.key,
+                                      keyboardType:
+                                          TextInputType.visiblePassword,
+                                      validator: controller.passValidator,
+                                      hidePass: controller.isPasswordHidden,
+                                      errorStatus:
+                                          authC.errorStatusLoginEmail.value,
+                                      errorText:
+                                          authC.errorTextLoginEmail.value,
+                                    ),
+                                  ],
+                                ),
                               ),
                               SizedBox(
                                 height: 0.3.h,

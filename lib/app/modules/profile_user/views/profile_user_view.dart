@@ -119,7 +119,8 @@ class ProfileUserView extends GetView<ProfileUserController> {
                             ),
                             InkWell(
                               onTap: () {
-                                Get.toNamed(Routes.EDIT_PROFILE);
+                                Get.toNamed(Routes.EDIT_PROFILE,
+                                    arguments: data);
                               },
                               child: Row(
                                 children: [

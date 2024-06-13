@@ -158,73 +158,71 @@ Widget formLoginPass({
   FocusScopeNode currentFocus = FocusScope.of(Get.context!);
   return Form(
     key: key,
-    child: Obx(
-      () => SizedBox(
-        width: 75.w,
-        height: 10.h,
-        child: TextFormField(
-          autofillHints: autofillHints,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          controller: textEditingController,
-          keyboardType: keyboardType,
-          validator: validator,
-          obscureText: hidePass.value,
-          onTap: () {
-            // if (!currentFocus.hasPrimaryFocus) {
-            //   currentFocus.unfocus();
-            // }
-          },
-          onTapOutside: (event) {
-            if (!currentFocus.hasPrimaryFocus) {
-              currentFocus.unfocus();
-            }
-          },
-          decoration: InputDecoration(
-            helperText: ' ',
-            errorText: errorStatus ? errorText : null,
-            helperStyle: getTextErrorFormLogin(),
-            hintText: hintText,
-            hintStyle: Theme.of(Get.context!).textTheme.displaySmall!.copyWith(
-                  fontSize: 12.sp,
-                ),
-            isDense: true,
-            contentPadding: const EdgeInsets.all(0),
-            prefixIcon: Padding(
-              padding: EdgeInsets.only(
-                left: 1.w,
-                right: 0.8.w,
+    child: SizedBox(
+      width: 75.w,
+      height: 10.h,
+      child: TextFormField(
+        autofillHints: autofillHints,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        controller: textEditingController,
+        keyboardType: keyboardType,
+        validator: validator,
+        obscureText: hidePass.value,
+        onTap: () {
+          // if (!currentFocus.hasPrimaryFocus) {
+          //   currentFocus.unfocus();
+          // }
+        },
+        onTapOutside: (event) {
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        decoration: InputDecoration(
+          helperText: ' ',
+          errorText: errorStatus ? errorText : null,
+          helperStyle: getTextErrorFormLogin(),
+          hintText: hintText,
+          hintStyle: Theme.of(Get.context!).textTheme.displaySmall!.copyWith(
+                fontSize: 12.sp,
               ),
-              child: Align(
-                widthFactor: 0.5,
-                heightFactor: 0.5,
-                child: Icon(
-                  iconPrefix,
-                  size: 18,
-                  color: Theme.of(Get.context!).iconTheme.color,
-                ),
+          isDense: true,
+          contentPadding: const EdgeInsets.all(0),
+          prefixIcon: Padding(
+            padding: EdgeInsets.only(
+              left: 1.w,
+              right: 0.8.w,
+            ),
+            child: Align(
+              widthFactor: 0.5,
+              heightFactor: 0.5,
+              child: Icon(
+                iconPrefix,
+                size: 18,
+                color: Theme.of(Get.context!).iconTheme.color,
               ),
             ),
-            suffixIcon: Padding(
-              padding: EdgeInsets.only(
-                right: 0.35.w,
-              ),
-              child: IconButton(
-                splashRadius: 1,
-                iconSize: 18,
-                icon: Icon(hidePass.value
-                    ? PhosphorIconsFill.eye
-                    : PhosphorIconsFill.eyeSlash),
-                onPressed: () {
-                  hidePass.value = !hidePass.value;
-                },
-              ),
+          ),
+          suffixIcon: Padding(
+            padding: EdgeInsets.only(
+              right: 0.35.w,
             ),
-            filled: true,
-            fillColor: Theme.of(Get.context!).cardColor,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(25),
-              borderSide: BorderSide(color: black, width: 1),
+            child: IconButton(
+              splashRadius: 1,
+              iconSize: 18,
+              icon: Icon(hidePass.value
+                  ? PhosphorIconsFill.eye
+                  : PhosphorIconsFill.eyeSlash),
+              onPressed: () {
+                hidePass.value = !hidePass.value;
+              },
             ),
+          ),
+          filled: true,
+          fillColor: Theme.of(Get.context!).cardColor,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide(color: black, width: 1),
           ),
         ),
       ),

@@ -43,8 +43,8 @@ class AZTravelApp extends StatelessWidget {
                 animationLink: 'assets/lottie/warning_aztravel.json',
                 text: "Terjadi Kesalahan!",
                 textSub: "Hubungi Developer",
-                textAlert: getTextAlert(context),
-                textAlertSub: getTextAlertSub(context),
+                textAlert: getTextAlert(),
+                textAlertSub: getTextAlertSub(),
               ),
             );
           }

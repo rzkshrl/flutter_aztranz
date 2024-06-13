@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:az_travel/app/controller/api_controller.dart';
+import 'package:az_travel/app/data/models/usermodel.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -20,9 +21,11 @@ class EditProfileView extends GetView<EditProfileController> {
   Widget build(BuildContext context) {
     var defaultImage =
         "https://ui-avatars.com/api/?background=fff38a&color=5175c0&font-size=0.33&size=256";
-    Get.put(AuthController());
+    final authC = Get.put(AuthController());
     final apiC = Get.put(APIController());
     final controller = Get.put(EditProfileController());
+
+    apiC.getDataUserCondition(authC.auth.currentUser!.email.toString());
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Profil'),
@@ -34,7 +37,7 @@ class EditProfileView extends GetView<EditProfileController> {
               return const LoadingView();
             }
 
-            var data = apiC.dataUserModel.value;
+            UserSQLModel data = apiC.dataUserModel.value;
             controller.namaLengkapEditProfileC.text = data.namaLengkap ?? '';
             controller.usernameEditProfileC.text = data.username ?? '';
             controller.noKtpEditProfileC.text = data.noKTP ?? '';
@@ -101,7 +104,7 @@ class EditProfileView extends GetView<EditProfileController> {
                                 },
                                 child: ClipOval(
                                   child: Image.network(
-                                    data.photoUrl! == ''
+                                    data.photoUrl == null
                                         ? defaultImage
                                         : data.photoUrl!,
                                     width: 45.w,

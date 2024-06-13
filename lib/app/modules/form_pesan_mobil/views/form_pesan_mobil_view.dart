@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:az_travel/app/controller/auth_controller.dart';
 import 'package:az_travel/app/theme/theme.dart';
 import 'package:az_travel/app/utils/loading.dart';
@@ -15,7 +17,6 @@ import '../../../data/models/datamobilmodel.dart';
 import '../../../theme/textstyle.dart';
 import '../../../utils/button.dart';
 import '../../../utils/dialog.dart';
-import '../../payment/controllers/payment_controller.dart';
 import '../controllers/form_pesan_mobil_controller.dart';
 
 class FormPesanMobilView extends GetView<FormPesanMobilController> {
@@ -24,8 +25,8 @@ class FormPesanMobilView extends GetView<FormPesanMobilController> {
   Widget build(BuildContext context) {
     Get.put(AuthController());
     final c = Get.put(FormPesanMobilController());
-    Get.put(PaymentController());
     final apiC = Get.put(APIController());
+
     final dataMobil = Get.arguments as DataMobilModel;
     final formatCurrency =
         NumberFormat.simpleCurrency(locale: 'id_ID', decimalDigits: 0);
@@ -190,8 +191,8 @@ class FormPesanMobilView extends GetView<FormPesanMobilController> {
                                         text: "Terjadi Kesalahan.",
                                         textSub:
                                             "Pilih tanggal jangkauan\n(Senin-Sabtu, dsb)\n(tekan tanggal dua kali \nuntuk memilih tanggal yang sama)",
-                                        textAlert: getTextAlert(context),
-                                        textAlertSub: getTextAlertSub(context),
+                                        textAlert: getTextAlert(),
+                                        textAlertSub: getTextAlertSub(),
                                       ),
                                     );
                                   }
@@ -202,8 +203,8 @@ class FormPesanMobilView extends GetView<FormPesanMobilController> {
                                           'assets/lottie/warning_aztravel.json',
                                       text: "Terjadi Kesalahan.",
                                       textSub: "Tanggal tidak dipilih.",
-                                      textAlert: getTextAlert(context),
-                                      textAlertSub: getTextAlertSub(context),
+                                      textAlert: getTextAlert(),
+                                      textAlertSub: getTextAlertSub(),
                                     ),
                                   );
                                 }
@@ -285,7 +286,6 @@ class FormPesanMobilView extends GetView<FormPesanMobilController> {
                               c.noTelpFormPesanC.text,
                               c.alamatFormPesanC.text,
                               dataMobil.fotoMobil!,
-                              // ignore: use_build_context_synchronously
                               context);
                         }
                       },
