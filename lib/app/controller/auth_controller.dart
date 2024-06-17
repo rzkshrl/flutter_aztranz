@@ -147,6 +147,9 @@ class AuthController extends GetxController {
             print('User berhasil dibuat dan bisa login');
           }
 
+          user.user!
+              .sendEmailVerification(); // mengirim verifikasi email untuk akun
+
           // dialog sukses
           await Get.dialog(
             dialogAlertOnly(
