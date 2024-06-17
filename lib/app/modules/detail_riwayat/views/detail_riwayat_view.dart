@@ -296,6 +296,7 @@ class DetailRiwayatView extends GetView<DetailRiwayatController> {
                                         const Duration(milliseconds: 120))
                                     .then((value) {
                                   controller.pesanMobilAPI(
+                                      dataReservasi.idReservasi!,
                                       dataReservasi.mobilId!,
                                       dataReservasi.harga!,
                                       dataReservasi.namaMobil!,

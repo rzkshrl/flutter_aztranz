@@ -29,6 +29,8 @@ class DetailMobilView extends GetView<DetailMobilController> {
     final apiC = Get.put(APIController());
     Get.put(AuthController());
     var fotoMobilURL = dataMobil.fotoMobil!.replaceRange(7, 21, apiC.imageIP);
+    final authC = Get.put(AuthController());
+    apiC.getDataUserCondition(authC.auth.currentUser!.email.toString());
     return AnnotatedRegion(
       value: const SystemUiOverlayStyle(
         statusBarBrightness: Brightness.dark,

@@ -6,6 +6,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../controller/auth_controller.dart';
+import '../../../data/constants/string.dart';
 import '../../../routes/app_pages.dart';
 import '../../../theme/theme.dart';
 import '../../../utils/button.dart';
@@ -15,11 +16,10 @@ class ProfileUserView extends GetView<ProfileUserController> {
   const ProfileUserView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    var defaultImage =
-        "https://ui-avatars.com/api/?background=fff38a&color=5175c0&font-size=0.33&size=256";
     final authC = Get.put(AuthController());
     final apiC = Get.put(APIController());
     final controller = Get.put(ProfileUserController());
+    apiC.getDataUserCondition(authC.auth.currentUser!.email.toString());
     var data = apiC.dataUserModel.value;
     return Scaffold(
         appBar: AppBar(

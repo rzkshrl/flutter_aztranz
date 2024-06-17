@@ -11,6 +11,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../controller/auth_controller.dart';
+import '../../../data/constants/string.dart';
 import '../controllers/dashboard_user_controller.dart';
 
 class DashboardUserView extends GetView<DashboardUserController> {
@@ -23,6 +24,7 @@ class DashboardUserView extends GetView<DashboardUserController> {
 
     final authC = Get.put(AuthController());
     apiC.getDataUserCondition(authC.auth.currentUser!.email.toString());
+    var data = apiC.dataUserModel.value;
 
     // menambah scrollcontroller untuk memantau scroll activity -> appbar
     final ScrollController scrollController = ScrollController();
@@ -87,12 +89,11 @@ class DashboardUserView extends GetView<DashboardUserController> {
                                 InkWell(
                                   onTap: () {},
                                   child: ClipOval(
-                                    child: Container(
-                                      width: 8.w,
-                                      height: 4.h,
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: blue_0C134F),
+                                    child: Image.network(
+                                      data.photoUrl == null
+                                          ? defaultImage
+                                          : data.photoUrl!,
+                                      width: 12.w,
                                     ),
                                   ),
                                 ),
@@ -150,12 +151,11 @@ class DashboardUserView extends GetView<DashboardUserController> {
                                 InkWell(
                                   onTap: () {},
                                   child: ClipOval(
-                                    child: Container(
+                                    child: Image.network(
+                                      data.photoUrl == null
+                                          ? defaultImage
+                                          : data.photoUrl!,
                                       width: 12.w,
-                                      height: 6.h,
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: blue_0C134F),
                                     ),
                                   ),
                                 )
@@ -177,263 +177,287 @@ class DashboardUserView extends GetView<DashboardUserController> {
                     padding: EdgeInsets.only(left: 4.w, right: 4.w),
                     child: Obx(
                       () => apiC.isLoading.value != true
-                          ? GridView.builder(
-                              shrinkWrap: true,
-                              itemCount: apiC.filteredDataMobil.length,
-                              physics: const BouncingScrollPhysics(),
-                              padding: EdgeInsets.only(bottom: 0.1.h),
-                              gridDelegate:
-                                  const SliverGridDelegateWithMaxCrossAxisExtent(
-                                      maxCrossAxisExtent: 250,
-                                      childAspectRatio: 0.60,
-                                      crossAxisSpacing: 0,
-                                      mainAxisSpacing: 0),
-                              itemBuilder: (context, index) {
-                                // inisiasi animasi dan durasi animasi setiap index
-                                if (c.cAniDashboardCategories[index] == null) {
-                                  c.cAniDashboardCategories[index] =
-                                      AnimationController(
-                                    vsync: c,
-                                    duration: const Duration(milliseconds: 70),
-                                  );
-                                  c.isItemClicked[index] = false;
-                                }
+                          ? apiC.filteredDataMobil.isNotEmpty
+                              ? GridView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: apiC.filteredDataMobil.length,
+                                  physics: const BouncingScrollPhysics(),
+                                  padding: EdgeInsets.only(bottom: 0.1.h),
+                                  gridDelegate:
+                                      const SliverGridDelegateWithMaxCrossAxisExtent(
+                                          maxCrossAxisExtent: 250,
+                                          childAspectRatio: 0.60,
+                                          crossAxisSpacing: 0,
+                                          mainAxisSpacing: 0),
+                                  itemBuilder: (context, index) {
+                                    // inisiasi animasi dan durasi animasi setiap index
+                                    if (c.cAniDashboardCategories[index] ==
+                                        null) {
+                                      c.cAniDashboardCategories[index] =
+                                          AnimationController(
+                                        vsync: c,
+                                        duration:
+                                            const Duration(milliseconds: 70),
+                                      );
+                                      c.isItemClicked[index] = false;
+                                    }
 
-                                var dataMobil = apiC.filteredDataMobil[index];
-                                final formatCurrency =
-                                    NumberFormat.simpleCurrency(
-                                        locale: 'id_ID', decimalDigits: 0);
-                                int hargaPerHariIDR =
-                                    int.parse(dataMobil.hargaPerHari!);
+                                    var dataMobil =
+                                        apiC.filteredDataMobil[index];
+                                    final formatCurrency =
+                                        NumberFormat.simpleCurrency(
+                                            locale: 'id_ID', decimalDigits: 0);
+                                    int hargaPerHariIDR =
+                                        int.parse(dataMobil.hargaPerHari!);
 
-                                var fotoMobilURL = dataMobil.fotoMobil!
-                                    .replaceRange(7, 21, apiC.imageIP);
+                                    var fotoMobilURL = dataMobil.fotoMobil!
+                                        .replaceRange(7, 21, apiC.imageIP);
 
-                                return AnimatedBuilder(
-                                  animation: c.cAniDashboardCategories[index]!,
-                                  builder: (context, child) {
-                                    return ScaleTransition(
-                                      scale: Tween(begin: 1.0, end: 0.95)
-                                          .animate(c
-                                              .cAniDashboardCategories[index]!),
-                                      child: child,
-                                    );
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 4.0, left: 4, right: 4, bottom: 4),
-                                    child: GestureDetector(
-                                      onLongPressDown: (details) {
-                                        c.cAniDashboardCategories[index]!
-                                            .forward();
+                                    return AnimatedBuilder(
+                                      animation:
+                                          c.cAniDashboardCategories[index]!,
+                                      builder: (context, child) {
+                                        return ScaleTransition(
+                                          scale: Tween(begin: 1.0, end: 0.95)
+                                              .animate(
+                                                  c.cAniDashboardCategories[
+                                                      index]!),
+                                          child: child,
+                                        );
                                       },
-                                      onLongPressEnd: (details) async {
-                                        await c.cAniDashboardCategories[index]!
-                                            .reverse();
-                                        if (dataMobil.status !=
-                                            'Tidak Tersedia') {
-                                          await Get.toNamed(Routes.DETAIL_MOBIL,
-                                              arguments: dataMobil);
-                                        } else {
-                                          null;
-                                        }
-                                      },
-                                      child: InkWell(
-                                        highlightColor: Colors.transparent,
-                                        splashColor: Colors.transparent,
-                                        splashFactory: NoSplash.splashFactory,
-                                        onTap: () {
-                                          c.cAniDashboardCategories[index]!
-                                              .forward();
-                                          Future.delayed(
-                                              const Duration(milliseconds: 70),
-                                              () {
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 4.0,
+                                            left: 4,
+                                            right: 4,
+                                            bottom: 4),
+                                        child: GestureDetector(
+                                          onLongPressDown: (details) {
                                             c.cAniDashboardCategories[index]!
+                                                .forward();
+                                          },
+                                          onLongPressEnd: (details) async {
+                                            await c
+                                                .cAniDashboardCategories[index]!
                                                 .reverse();
-                                          });
-                                          if (dataMobil.status !=
-                                              'Tidak Tersedia') {
-                                            Get.toNamed(Routes.DETAIL_MOBIL,
-                                                arguments: dataMobil);
-                                          } else {
-                                            null;
-                                          }
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: black.withOpacity(0.2),
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              ClipRRect(
+                                            if (dataMobil.status !=
+                                                'Tidak Tersedia') {
+                                              await Get.toNamed(
+                                                  Routes.DETAIL_MOBIL,
+                                                  arguments: dataMobil);
+                                            } else {
+                                              null;
+                                            }
+                                          },
+                                          child: InkWell(
+                                            highlightColor: Colors.transparent,
+                                            splashColor: Colors.transparent,
+                                            splashFactory:
+                                                NoSplash.splashFactory,
+                                            onTap: () {
+                                              c.cAniDashboardCategories[index]!
+                                                  .forward();
+                                              Future.delayed(
+                                                  const Duration(
+                                                      milliseconds: 70), () {
+                                                c.cAniDashboardCategories[
+                                                        index]!
+                                                    .reverse();
+                                              });
+                                              if (dataMobil.status !=
+                                                  'Tidak Tersedia') {
+                                                Get.toNamed(Routes.DETAIL_MOBIL,
+                                                    arguments: dataMobil);
+                                              } else {
+                                                null;
+                                              }
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: black.withOpacity(0.2),
                                                 borderRadius:
-                                                    const BorderRadius.only(
-                                                  topLeft: Radius.circular(20),
-                                                  topRight: Radius.circular(20),
-                                                ),
-                                                child: Center(
-                                                  child: dataMobil.status !=
-                                                          "Tidak Tersedia"
-                                                      ? Image.network(
-                                                          fotoMobilURL,
-                                                          fit: BoxFit.cover,
-                                                          width: 50.w,
-                                                          height: 22.h,
-                                                        )
-                                                      : Stack(
-                                                          alignment:
-                                                              Alignment.center,
-                                                          children: [
-                                                            Opacity(
-                                                              opacity: 0.3,
-                                                              child:
-                                                                  Image.network(
-                                                                fotoMobilURL,
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                                width: 50.w,
-                                                                height: 22.h,
-                                                              ),
-                                                            ),
-                                                            Text(
-                                                              'Tidak Tersedia',
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontSize:
-                                                                      10.sp),
-                                                            )
-                                                          ],
-                                                        ),
-                                                ),
+                                                    BorderRadius.circular(20),
                                               ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 1.5.h,
-                                                    left: 3.w,
-                                                    right: 3.w),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Column(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  ClipRRect(
+                                                    borderRadius:
+                                                        const BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(20),
+                                                      topRight:
+                                                          Radius.circular(20),
+                                                    ),
+                                                    child: Center(
+                                                      child: dataMobil.status !=
+                                                              "Tidak Tersedia"
+                                                          ? Image.network(
+                                                              fotoMobilURL,
+                                                              fit: BoxFit.cover,
+                                                              width: 50.w,
+                                                              height: 22.h,
+                                                            )
+                                                          : Stack(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              children: [
+                                                                Opacity(
+                                                                  opacity: 0.3,
+                                                                  child: Image
+                                                                      .network(
+                                                                    fotoMobilURL,
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    width: 50.w,
+                                                                    height:
+                                                                        22.h,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  'Tidak Tersedia',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          10.sp),
+                                                                )
+                                                              ],
+                                                            ),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 1.5.h,
+                                                        left: 3.w,
+                                                        right: 3.w),
+                                                    child: Row(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
+                                                              .spaceBetween,
                                                       children: [
-                                                        Text(
-                                                          dataMobil.namaMobil!,
-                                                          style:
-                                                              Theme.of(context)
+                                                        Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                              dataMobil
+                                                                  .namaMobil!,
+                                                              style: Theme.of(
+                                                                      context)
                                                                   .textTheme
                                                                   .titleMedium!
                                                                   .copyWith(
                                                                     fontSize:
-                                                                        12.sp,
+                                                                        10.sp,
                                                                     height: 1,
                                                                   ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 0.5.h,
+                                                            ),
+                                                            Text(
+                                                              dataMobil.merek!,
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .displayMedium!
+                                                                  .copyWith(
+                                                                    fontSize:
+                                                                        9.sp,
+                                                                    height: 1,
+                                                                  ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 0.5.h,
+                                                            ),
+                                                            Text(
+                                                              '${formatCurrency.format(hargaPerHariIDR)}/hari',
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .displayMedium!
+                                                                  .copyWith(
+                                                                    fontSize:
+                                                                        10.sp,
+                                                                    height: 1,
+                                                                  ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 0.7.h,
+                                                            ),
+                                                            Text(
+                                                              'Tahun ${dataMobil.tahun!}',
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .displayMedium!
+                                                                  .copyWith(
+                                                                    fontSize:
+                                                                        9.sp,
+                                                                    height: 1,
+                                                                  ),
+                                                            ),
+                                                          ],
                                                         ),
-                                                        SizedBox(
-                                                          height: 0.5.h,
-                                                        ),
-                                                        Text(
-                                                          dataMobil.merek!,
-                                                          style: Theme.of(
-                                                                  context)
-                                                              .textTheme
-                                                              .displayMedium!
-                                                              .copyWith(
-                                                                fontSize: 9.sp,
-                                                                height: 1,
+                                                        InkWell(
+                                                          onTap: () {
+                                                            c.cAniDashboardCategories[
+                                                                    index]!
+                                                                .forward();
+                                                            Future.delayed(
+                                                                const Duration(
+                                                                    milliseconds:
+                                                                        70),
+                                                                () {
+                                                              c.cAniDashboardCategories[
+                                                                      index]!
+                                                                  .reverse();
+                                                            });
+                                                            if (dataMobil
+                                                                    .status !=
+                                                                'Tidak Tersedia') {
+                                                              Get.toNamed(
+                                                                  Routes
+                                                                      .DETAIL_MOBIL,
+                                                                  arguments:
+                                                                      dataMobil);
+                                                            } else {
+                                                              null;
+                                                            }
+                                                          },
+                                                          child: Row(
+                                                            children: [
+                                                              Icon(
+                                                                PhosphorIconsLight
+                                                                    .caretRight,
+                                                                size: 6.w,
                                                               ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 0.5.h,
-                                                        ),
-                                                        Text(
-                                                          '${formatCurrency.format(hargaPerHariIDR)}/hari',
-                                                          style: Theme.of(
-                                                                  context)
-                                                              .textTheme
-                                                              .displayMedium!
-                                                              .copyWith(
-                                                                fontSize: 10.sp,
-                                                                height: 1,
-                                                              ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 0.7.h,
-                                                        ),
-                                                        Text(
-                                                          'Tahun ${dataMobil.tahun!}',
-                                                          style: Theme.of(
-                                                                  context)
-                                                              .textTheme
-                                                              .displayMedium!
-                                                              .copyWith(
-                                                                fontSize: 9.sp,
-                                                                height: 1,
-                                                              ),
-                                                        ),
+                                                            ],
+                                                          ),
+                                                        )
                                                       ],
                                                     ),
-                                                    InkWell(
-                                                      onTap: () {
-                                                        c.cAniDashboardCategories[
-                                                                index]!
-                                                            .forward();
-                                                        Future.delayed(
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    70), () {
-                                                          c.cAniDashboardCategories[
-                                                                  index]!
-                                                              .reverse();
-                                                        });
-                                                        if (dataMobil.status !=
-                                                            'Tidak Tersedia') {
-                                                          Get.toNamed(
-                                                              Routes
-                                                                  .DETAIL_MOBIL,
-                                                              arguments:
-                                                                  dataMobil);
-                                                        } else {
-                                                          null;
-                                                        }
-                                                      },
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(
-                                                            PhosphorIconsLight
-                                                                .caretRight,
-                                                            size: 6.w,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              )
-                                            ],
+                                                  )
+                                                ],
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            )
+                                    );
+                                  },
+                                )
+                              : dataEmptyProp()
                           : loadingProp(),
                     ),
                   );

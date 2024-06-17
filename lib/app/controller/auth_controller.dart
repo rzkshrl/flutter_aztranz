@@ -79,6 +79,101 @@ class AuthController extends GetxController {
       // mengirim verifikasi email ke email yang terdaftar
       await userCredential.user!.sendEmailVerification();
       return userCredential;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  // register untuk membuat data user
+  Future<void> register(
+      String username,
+      String email,
+      String password,
+      String passwordAgain,
+      String namaLengkap,
+      String noKTP,
+      String noTelp,
+      String alamat) async {
+    try {
+      // pengecekan form kata sandi dengan form ulangi kata sandi
+      if (password != passwordAgain) {
+        errorStatusPass.value = true;
+        errorTextPass.value = 'Kata sandi harus sama!';
+        errorStatusPassAgain.value = true;
+        errorTextPassAgain.value = 'Kata sandi harus sama!';
+      } else {
+        // mengambil data user dari SQL untuk pengecekan
+        apiC.getDataUserCondition(email);
+        if (kDebugMode) {
+          print("email dari GET user/ : ${apiC.dataUserModel.value.email}");
+          print(
+              "nama_lengkap dari GET user/ : ${apiC.dataUserModel.value.namaLengkap}");
+        }
+
+        // pengecekan apakah data user di SQL belum ada
+        if (apiC.dataUserModel.value.email == null ||
+            apiC.dataUserModel.value.email != email) {
+          // jika user belum ada, buat user dengan email dan password yang akan tersimpan sebagai UserCredential
+          if (kDebugMode) {
+            print('buat akun');
+          }
+          UserCredential user = await createUser(email, password);
+
+          Get.back();
+
+          // mengambil uid
+          String uid = user.user?.uid ?? '';
+          User? userNow = await auth
+              .authStateChanges()
+              .firstWhere((user) => user?.uid == uid);
+
+          // mengupdate displayName dari UserCredential
+          if (userNow != null) {
+            await userNow.updateDisplayName(namaLengkap);
+          }
+
+          // menyimpan user ke SQL dengan POST
+          apiC.postUsers(
+              username: username,
+              email: email,
+              namaLengkap: namaLengkap,
+              noKTP: noKTP,
+              noTelp: noTelp,
+              alamat: alamat,
+              uid: uid,
+              fotoUrl: '');
+
+          if (kDebugMode) {
+            print('User berhasil dibuat dan bisa login');
+          }
+
+          // dialog sukses
+          await Get.dialog(
+            dialogAlertOnly(
+              animationLink: 'assets/lottie/finish_aztravel.json',
+              text: "Berhasil!",
+              textSub:
+                  "Akun berhasil dibuat. Silahkan masuk dan verifikasi akun anda.",
+              textAlert: getTextAlert(),
+              textAlertSub: getTextAlertSub(),
+            ),
+          );
+
+          // routing masuk aplikasi
+          await Get.offAllNamed(Routes.LOGIN);
+        } else {
+          // handling error
+          Get.dialog(
+            dialogAlertOnly(
+              animationLink: 'assets/lottie/warning_aztravel.json',
+              text: "Terjadi Kesalahan!",
+              textSub: "Akun sudah ada dan pernah dibuat.",
+              textAlert: getTextAlert(),
+              textAlertSub: getTextAlertSub(),
+            ),
+          );
+        }
+      }
     } on FirebaseAuthException catch (e) {
       // error handling ketika email sudah pernah dipakai
       if (e.code == 'email-already-in-use') {
@@ -100,96 +195,6 @@ class AuthController extends GetxController {
         }
       }
       throw Exception();
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-      throw Exception();
-    }
-  }
-
-  // register untuk membuat data user
-  Future<void> register(
-      String username,
-      String email,
-      String password,
-      String passwordAgain,
-      String namaLengkap,
-      String noKTP,
-      String noTelp,
-      String alamat) async {
-    try {
-      // pengecekan form kata sandi dengan form ulangi kata sandi
-      if (password != passwordAgain) {
-        errorStatusPass.value = true;
-        errorTextPass.value = 'Kata sandi harus sama!';
-        errorStatusPassAgain.value = true;
-        errorTextPassAgain.value = 'Kata sandi harus sama!';
-      }
-
-      // mengambil data user dari SQL untuk pengecekan
-      apiC.getDataUserCondition(email);
-
-      // pengecekan apakah data user di SQL belum ada
-      if (apiC.dataUserModel.value.email == null ||
-          apiC.dataUserModel.value.email != email) {
-        // jika user belum ada, buat user dengan email dan password yang akan tersimpan sebagai UserCredential
-        UserCredential user = await createUser(email, password);
-
-        Get.back();
-
-        // mengambil uid
-        String uid = user.user?.uid ?? '';
-        User? userNow = await auth
-            .authStateChanges()
-            .firstWhere((user) => user?.uid == uid);
-
-        // mengupdate displayName dari UserCredential
-        if (userNow != null) {
-          await userNow.updateDisplayName(namaLengkap);
-        }
-
-        // menyimpan user ke SQL dengan POST
-        apiC.postUsers(
-            username: username,
-            email: email,
-            namaLengkap: namaLengkap,
-            noKTP: noKTP,
-            noTelp: noTelp,
-            alamat: alamat,
-            uid: uid,
-            fotoUrl: '');
-
-        if (kDebugMode) {
-          print('User berhasil dibuat dan bisa login');
-        }
-
-        // dialog sukses
-        await Get.dialog(
-          dialogAlertOnly(
-            animationLink: 'assets/lottie/finish_aztravel.json',
-            text: "Berhasil!",
-            textSub:
-                "Akun berhasil dibuat. Silahkan masuk dan verifikasi akun anda.",
-            textAlert: getTextAlert(),
-            textAlertSub: getTextAlertSub(),
-          ),
-        );
-
-        // routing masuk aplikasi
-        await Get.offAllNamed(Routes.LOGIN);
-      } else {
-        // handling error
-        Get.dialog(
-          dialogAlertOnly(
-            animationLink: 'assets/lottie/warning_aztravel.json',
-            text: "Terjadi Kesalahan!",
-            textSub: "Akun sudah ada dan pernah dibuat.",
-            textAlert: getTextAlert(),
-            textAlertSub: getTextAlertSub(),
-          ),
-        );
-      }
     } catch (e) {
       if (kDebugMode) {
         log('$e');
@@ -341,6 +346,7 @@ class AuthController extends GetxController {
   Future signInGoogle() async {
     // memastikan tidak ada akun yang tertinggal/login sebelum button dijalankan
     await _googleSignIn.signOut();
+    await apiC.clearData();
 
     // menyimpan objek user yang masuk menggunakan GoogleSignIn
     _currentUser =
@@ -365,7 +371,7 @@ class AuthController extends GetxController {
 
       // mengambil email dari informasi akun masuk dari FirebaseAuth serta GET data user dari SQL untuk pengecekan data
       String emailUser = auth.currentUser!.email.toString();
-      apiC.getDataUserCondition(emailUser);
+      await apiC.getDataUserCondition(emailUser);
       if (kDebugMode) {
         print("email dari GET user/ : ${apiC.dataUserModel.value.email}");
         print(
@@ -439,6 +445,7 @@ class AuthController extends GetxController {
   Future<void> logout() async {
     // keluar/signOut
     await auth.signOut();
+
     if (kDebugMode) {
       print('berhasil logout');
     }

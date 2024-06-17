@@ -33,6 +33,7 @@ class DetailRiwayatController extends GetxController
   var apiC = Get.put(APIController());
 
   Future<void> pesanMobilAPI(
+    int idReservasi,
     int idMobil,
     String harga,
     String namaMobil,
@@ -47,14 +48,14 @@ class DetailRiwayatController extends GetxController
   ) async {
     try {
       if (kDebugMode) {
+        print('ID Reservasi : $idReservasi');
         print('ID Mobil : $idMobil');
-      }
-      if (kDebugMode) {
         print('Harga Mobil Total : $harga');
       }
 
       await showLoading(
-        apiC.postDataReservasi(
+        apiC.updateDataReservasi(
+          idReservasi,
           idMobil,
           namaMobil,
           namaPemesan,
@@ -136,6 +137,8 @@ class DetailRiwayatController extends GetxController
         if (result.transactionStatus == TransactionResultStatus.settlement) {
           await apiC.updateStatusReservasi(
               apiC.hasilResponseDataReservasi.value.idReservasi!);
+          await apiC.postDataMobilStatus(
+              apiC.hasilResponseDataReservasi.value.mobilId!);
           await apiC.getDetailReservasiSingle(
               apiC.hasilResponseDataReservasi.value.idReservasi!);
 

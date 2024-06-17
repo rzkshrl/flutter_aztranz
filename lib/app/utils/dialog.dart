@@ -133,7 +133,7 @@ void showToast(String msg, bool isError) {
   Fluttertoast.showToast(
       msg: msg,
       toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
+      gravity: ToastGravity.SNACKBAR,
       timeInSecForIosWeb: 1,
       backgroundColor: isError ? Colors.red : Colors.green,
       textColor: Colors.white,

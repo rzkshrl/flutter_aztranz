@@ -64,33 +64,33 @@ class EditProfileView extends GetView<EditProfileController> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      buttonWithIcon(
-                        onTap: () {
-                          controller.cAniUbahGambar.forward();
-                          Future.delayed(const Duration(milliseconds: 70), () {
-                            controller.cAniUbahGambar.reverse();
-                          });
-                          Future.delayed(const Duration(milliseconds: 120))
-                              .then((value) {
-                            controller.pickImage();
-                          });
-                        },
-                        animationController: controller.cAniUbahGambar,
-                        onLongPressEnd: (details) async {
-                          await controller.cAniUbahGambar.forward();
-                          await controller.cAniUbahGambar.reverse();
-                          controller.pickImage();
-                        },
-                        elevation: 0,
-                        btnColor: yellow1_F9B401,
-                        icon: Icon(
-                          PhosphorIconsBold.camera,
-                          size: 6.w,
-                        ),
-                        width: 40.w,
-                        text: 'Ubah Gambar',
-                        textColor: black,
-                      ),
+                      // buttonWithIcon(
+                      //   onTap: () {
+                      //     controller.cAniUbahGambar.forward();
+                      //     Future.delayed(const Duration(milliseconds: 70), () {
+                      //       controller.cAniUbahGambar.reverse();
+                      //     });
+                      //     Future.delayed(const Duration(milliseconds: 120))
+                      //         .then((value) {
+                      //       controller.pickImage();
+                      //     });
+                      //   },
+                      //   animationController: controller.cAniUbahGambar,
+                      //   onLongPressEnd: (details) async {
+                      //     await controller.cAniUbahGambar.forward();
+                      //     await controller.cAniUbahGambar.reverse();
+                      //     controller.pickImage();
+                      //   },
+                      //   elevation: 0,
+                      //   btnColor: yellow1_F9B401,
+                      //   icon: Icon(
+                      //     PhosphorIconsBold.camera,
+                      //     size: 6.w,
+                      //   ),
+                      //   width: 40.w,
+                      //   text: 'Ubah Gambar',
+                      //   textColor: black,
+                      // ),
                       SizedBox(
                         height: 2.5.h,
                       ),
@@ -100,7 +100,7 @@ class EditProfileView extends GetView<EditProfileController> {
                             if (c.image == null)
                               InkWell(
                                 onTap: () {
-                                  controller.pickImage();
+                                  // controller.pickImage();
                                 },
                                 child: ClipOval(
                                   child: Image.network(
@@ -114,7 +114,7 @@ class EditProfileView extends GetView<EditProfileController> {
                             else
                               InkWell(
                                 onTap: () {
-                                  controller.pickImage();
+                                  // controller.pickImage();
                                 },
                                 child: ClipOval(
                                   child: Image.file(

@@ -46,6 +46,27 @@ Widget loadingProp() {
   );
 }
 
+Widget dataEmptyProp() {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      SizedBox(
+        height: 20.h,
+      ),
+      Center(
+        child:
+            Lottie.asset('assets/lottie/data empty_aztravel.json', height: 255),
+      ),
+      Text(
+        'Data kosong.',
+        textAlign: TextAlign.center,
+        style: getTextAlert(),
+      ),
+    ],
+  );
+}
+
 Widget dialogLoading(BuildContext context) {
   return Dialog(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),

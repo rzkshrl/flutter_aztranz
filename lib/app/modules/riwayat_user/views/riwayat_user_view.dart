@@ -7,6 +7,8 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../controller/api_controller.dart';
+import '../../../controller/auth_controller.dart';
+import '../../../data/constants/string.dart';
 import '../../../routes/app_pages.dart';
 import '../../../theme/theme.dart';
 import '../../../utils/textfield.dart';
@@ -19,6 +21,10 @@ class RiwayatUserView extends GetView<RiwayatUserController> {
     final c = Get.put(RiwayatUserController());
     final apiC = Get.put(APIController());
     apiC.getDataReservasi();
+
+    final authC = Get.put(AuthController());
+    apiC.getDataUserCondition(authC.auth.currentUser!.email.toString());
+    var data = apiC.dataUserModel.value;
 
     // add scrollcontroller to listen scroll activity for appbar
     final ScrollController scrollController = ScrollController();
@@ -83,12 +89,11 @@ class RiwayatUserView extends GetView<RiwayatUserController> {
                                 InkWell(
                                   onTap: () {},
                                   child: ClipOval(
-                                    child: Container(
-                                      width: 8.w,
-                                      height: 4.h,
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: blue_0C134F),
+                                    child: Image.network(
+                                      data.photoUrl == null
+                                          ? defaultImage
+                                          : data.photoUrl!,
+                                      width: 12.w,
                                     ),
                                   ),
                                 ),
@@ -145,12 +150,11 @@ class RiwayatUserView extends GetView<RiwayatUserController> {
                                 InkWell(
                                   onTap: () {},
                                   child: ClipOval(
-                                    child: Container(
+                                    child: Image.network(
+                                      data.photoUrl == null
+                                          ? defaultImage
+                                          : data.photoUrl!,
                                       width: 12.w,
-                                      height: 6.h,
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: blue_0C134F),
                                     ),
                                   ),
                                 )
@@ -172,137 +176,190 @@ class RiwayatUserView extends GetView<RiwayatUserController> {
                     padding: EdgeInsets.only(left: 4.w, right: 4.w),
                     child: Obx(
                       () => apiC.isLoading.value != true
-                          ? ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: apiC.filteredDataReservasiModel.length,
-                              physics: const BouncingScrollPhysics(),
-                              padding: EdgeInsets.only(bottom: 0.001.h),
-                              itemBuilder: (context, index) {
-                                // initiate animation and duration for animation each index
-                                if (c.cAniHistoryItem[index] == null) {
-                                  c.cAniHistoryItem[index] =
-                                      AnimationController(
-                                    vsync: c,
-                                    duration: const Duration(milliseconds: 70),
-                                  );
-                                  c.isItemClicked[index] = false;
-                                }
+                          ? apiC.filteredDataReservasiModel.isNotEmpty
+                              ? ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount:
+                                      apiC.filteredDataReservasiModel.length,
+                                  physics: const BouncingScrollPhysics(),
+                                  padding: EdgeInsets.only(bottom: 0.001.h),
+                                  itemBuilder: (context, index) {
+                                    // initiate animation and duration for animation each index
+                                    if (c.cAniHistoryItem[index] == null) {
+                                      c.cAniHistoryItem[index] =
+                                          AnimationController(
+                                        vsync: c,
+                                        duration:
+                                            const Duration(milliseconds: 70),
+                                      );
+                                      c.isItemClicked[index] = false;
+                                    }
 
-                                var dataRiwayatReservasi =
-                                    apiC.filteredDataReservasiModel[index];
-                                final formatCurrency =
-                                    NumberFormat.simpleCurrency(
-                                        locale: 'id_ID', decimalDigits: 0);
-                                int harga =
-                                    int.parse(dataRiwayatReservasi.harga!);
+                                    var dataRiwayatReservasi =
+                                        apiC.filteredDataReservasiModel[index];
+                                    final formatCurrency =
+                                        NumberFormat.simpleCurrency(
+                                            locale: 'id_ID', decimalDigits: 0);
+                                    int harga =
+                                        int.parse(dataRiwayatReservasi.harga!);
 
-                                var dateStartShort =
-                                    dataRiwayatReservasi.tanggalPesanStart!;
-                                var dateEndShort =
-                                    dataRiwayatReservasi.tanggalPesanEnd!;
+                                    var dateStartShort =
+                                        dataRiwayatReservasi.tanggalPesanStart!;
+                                    var dateEndShort =
+                                        dataRiwayatReservasi.tanggalPesanEnd!;
 
-                                return AnimatedBuilder(
-                                  animation: c.cAniHistoryItem[index]!,
-                                  builder: (context, child) {
-                                    return ScaleTransition(
-                                      scale: Tween(begin: 1.0, end: 0.95)
-                                          .animate(c.cAniHistoryItem[index]!),
-                                      child: child,
-                                    );
-                                  },
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 4, right: 4, bottom: 2.h),
-                                    child: GestureDetector(
-                                      onLongPressDown: (details) {
-                                        c.cAniHistoryItem[index]!.forward();
+                                    return AnimatedBuilder(
+                                      animation: c.cAniHistoryItem[index]!,
+                                      builder: (context, child) {
+                                        return ScaleTransition(
+                                          scale: Tween(begin: 1.0, end: 0.95)
+                                              .animate(
+                                                  c.cAniHistoryItem[index]!),
+                                          child: child,
+                                        );
                                       },
-                                      onLongPressEnd: (details) async {
-                                        await c.cAniHistoryItem[index]!
-                                            .reverse();
-                                        await Get.toNamed(Routes.DETAIL_RIWAYAT,
-                                            arguments: dataRiwayatReservasi);
-                                      },
-                                      child: InkWell(
-                                        highlightColor: Colors.transparent,
-                                        splashColor: Colors.transparent,
-                                        splashFactory: NoSplash.splashFactory,
-                                        onTap: () {
-                                          c.cAniHistoryItem[index]!.forward();
-                                          Future.delayed(
-                                              const Duration(milliseconds: 70),
-                                              () {
-                                            c.cAniHistoryItem[index]!.reverse();
-                                          });
-                                          Get.toNamed(Routes.DETAIL_RIWAYAT,
-                                              arguments: dataRiwayatReservasi);
-                                        },
-                                        child: Container(
-                                          height: 12.5.h,
-                                          decoration: BoxDecoration(
-                                            color: black.withOpacity(0.2),
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 1.5.h,
-                                                bottom: 1.5.h,
-                                                left: 3.w,
-                                                right: 3.w),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Row(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 4, right: 4, bottom: 2.h),
+                                        child: GestureDetector(
+                                          onLongPressDown: (details) {
+                                            c.cAniHistoryItem[index]!.forward();
+                                          },
+                                          onLongPressEnd: (details) async {
+                                            await c.cAniHistoryItem[index]!
+                                                .reverse();
+                                            await Get.toNamed(
+                                                Routes.DETAIL_RIWAYAT,
+                                                arguments:
+                                                    dataRiwayatReservasi);
+                                          },
+                                          child: InkWell(
+                                            highlightColor: Colors.transparent,
+                                            splashColor: Colors.transparent,
+                                            splashFactory:
+                                                NoSplash.splashFactory,
+                                            onTap: () {
+                                              c.cAniHistoryItem[index]!
+                                                  .forward();
+                                              Future.delayed(
+                                                  const Duration(
+                                                      milliseconds: 70), () {
+                                                c.cAniHistoryItem[index]!
+                                                    .reverse();
+                                              });
+                                              Get.toNamed(Routes.DETAIL_RIWAYAT,
+                                                  arguments:
+                                                      dataRiwayatReservasi);
+                                            },
+                                            child: Container(
+                                              height: 12.5.h,
+                                              decoration: BoxDecoration(
+                                                color: black.withOpacity(0.2),
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              child: Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: 1.5.h,
+                                                    bottom: 1.5.h,
+                                                    left: 3.w,
+                                                    right: 3.w),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
-                                                    Stack(
-                                                      alignment:
-                                                          Alignment.center,
+                                                    Row(
                                                       children: [
-                                                        Container(
-                                                          width: 20.w,
-                                                          decoration: BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          20),
-                                                              color: light),
+                                                        Stack(
+                                                          alignment:
+                                                              Alignment.center,
+                                                          children: [
+                                                            Container(
+                                                              width: 20.w,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              20),
+                                                                  color: light),
+                                                            ),
+                                                            Icon(
+                                                              PhosphorIconsBold
+                                                                  .dotsThree,
+                                                              size: 10.w,
+                                                            ),
+                                                          ],
                                                         ),
-                                                        Icon(
-                                                          PhosphorIconsBold
-                                                              .dotsThree,
-                                                          size: 10.w,
+                                                        SizedBox(
+                                                          width: 3.w,
                                                         ),
-                                                      ],
-                                                    ),
-                                                    SizedBox(
-                                                      width: 3.w,
-                                                    ),
-                                                    Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          dataRiwayatReservasi
-                                                              .namaMobil!,
-                                                          style:
-                                                              Theme.of(context)
+                                                        Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                              dataRiwayatReservasi
+                                                                  .namaMobil!,
+                                                              style: Theme.of(
+                                                                      context)
                                                                   .textTheme
                                                                   .titleMedium!
                                                                   .copyWith(
                                                                     fontSize:
-                                                                        12.sp,
+                                                                        9.sp,
                                                                     height: 1,
                                                                   ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 2.h,
+                                                            ),
+                                                            Text(
+                                                              'Status Pembayaran :',
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .displayMedium!
+                                                                  .copyWith(
+                                                                    fontSize:
+                                                                        8.sp,
+                                                                    height: 1,
+                                                                  ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 0.5.h,
+                                                            ),
+                                                            Text(
+                                                              dataRiwayatReservasi
+                                                                  .status!,
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .displayMedium!
+                                                                  .copyWith(
+                                                                    fontSize:
+                                                                        9.sp,
+                                                                    height: 1,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                  ),
+                                                            ),
+                                                          ],
                                                         ),
-                                                        SizedBox(
-                                                          height: 2.h,
-                                                        ),
+                                                      ],
+                                                    ),
+                                                    Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .end,
+                                                      children: [
                                                         Text(
-                                                          'Status Pembayaran :',
+                                                          '$dateStartShort - $dateEndShort',
                                                           style: Theme.of(
                                                                   context)
                                                               .textTheme
@@ -313,71 +370,36 @@ class RiwayatUserView extends GetView<RiwayatUserController> {
                                                               ),
                                                         ),
                                                         SizedBox(
-                                                          height: 0.5.h,
+                                                          height: 1.h,
                                                         ),
                                                         Text(
-                                                          dataRiwayatReservasi
-                                                              .status!,
+                                                          formatCurrency
+                                                              .format(harga),
                                                           style: Theme.of(
                                                                   context)
                                                               .textTheme
-                                                              .displayMedium!
+                                                              .titleMedium!
                                                               .copyWith(
-                                                                fontSize: 9.sp,
-                                                                height: 1,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                              ),
+                                                                  fontSize:
+                                                                      11.sp,
+                                                                  height: 1,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w800),
                                                         ),
                                                       ],
                                                     ),
                                                   ],
                                                 ),
-                                                Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  children: [
-                                                    Text(
-                                                      '$dateStartShort - $dateEndShort',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .displayMedium!
-                                                          .copyWith(
-                                                            fontSize: 8.sp,
-                                                            height: 1,
-                                                          ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 1.h,
-                                                    ),
-                                                    Text(
-                                                      formatCurrency
-                                                          .format(harga),
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .titleMedium!
-                                                          .copyWith(
-                                                              fontSize: 11.sp,
-                                                              height: 1,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w800),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            )
+                                    );
+                                  },
+                                )
+                              : dataEmptyProp()
                           : loadingProp(),
                     ),
                   );

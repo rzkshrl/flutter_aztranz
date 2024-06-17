@@ -19,7 +19,9 @@ import '../utils/dialog.dart';
 class APIController extends GetxController {
   // inisiasi package dio untuk REST API
   final dio = dioo.Dio(dioo.BaseOptions(
-      baseUrl: EMULATOR_IP, headers: {"Access-Control-Allow-Origin": "*"}));
+      baseUrl:
+          EMULATOR_IP, // IP untuk API Endpoint, disimpan pada file ../data/constant.dart
+      headers: {"Access-Control-Allow-Origin": "*"}));
 
   // custom IP untuk gambar
   var imageIP = EMULATOR;
@@ -31,10 +33,12 @@ class APIController extends GetxController {
   var filteredDataMobil = <DataMobilModel>[].obs;
   var searchText = ''.obs;
 
+  // fungsi GET data tabel Mobil
   Future<void> getDataMobil() async {
     try {
       isLoading.value = true;
       dataMobilModel.clear();
+      // inisiasi url API Endpoint
       String url = 'api/mobil/';
 
       var res = await dio.get(url);
@@ -44,6 +48,7 @@ class APIController extends GetxController {
       // }
 
       if (res.statusCode == 200) {
+        // masukkan hasil response ke dalam model data
         var dataMobil = List.from(res.data['data'] as List)
             .map((e) => DataMobilModel.fromJson(e))
             .toList();
@@ -63,6 +68,7 @@ class APIController extends GetxController {
     }
   }
 
+  // fungsi untuk kolom pencarian mobil
   void searchMobil(String query) {
     searchText.value = query;
     if (query.isEmpty) {
@@ -82,10 +88,12 @@ class APIController extends GetxController {
   var filteredDataReservasiModel = <DataReservasiModel>[].obs;
   var searchTextHistory = ''.obs;
 
+  // fungsi GET data tabel Reservasi
   Future<void> getDataReservasi() async {
     try {
       isLoading.value = true;
       dataMobilModel.clear();
+      // inisiasi url API Endpoint
       String url = 'api/reservasi/';
 
       var res = await dio.get(url);
@@ -95,6 +103,7 @@ class APIController extends GetxController {
       // }
 
       if (res.statusCode == 200) {
+        // masukkan hasil response ke model data
         var dataReservasi = List.from(res.data['data'] as List)
             .map((e) => DataReservasiModel.fromJson(e))
             .toList();
@@ -141,6 +150,7 @@ class APIController extends GetxController {
   var hasilResponseDataReservasi = DataReservasiModel().obs;
   var hasilReservasiNow = DataReservasiModel().obs;
 
+  // fungsi POST untuk mengirim reservasi mobil
   Future<void> postDataReservasi(
       int idMobil,
       String namaMobil,
@@ -154,7 +164,7 @@ class APIController extends GetxController {
       String fotoUrl) async {
     try {
       isLoading.value = true;
-
+      // inisiasi url API Endpoint
       String url = 'api/reservasi/store/';
       var data = {
         'mobil_id': idMobil,
@@ -182,9 +192,12 @@ class APIController extends GetxController {
 
       if (res.statusCode == 200) {
         debugPrint('Pesanan terkirim ke server');
+        // dapatkan 'snap_token' dari hasil response untuk Midtrans
         snapToken = res.data['snap_token'];
+        // simpan hasil response ke model data
         hasilResponseDataReservasi.value =
             DataReservasiModel.fromJson(res.data['data']);
+        // fungsi GET untuk mendapatkan data reservasi tunggal
         getDetailReservasiSingle(hasilResponseDataReservasi.value.idReservasi!);
 
         if (kDebugMode) {
@@ -202,15 +215,37 @@ class APIController extends GetxController {
     }
   }
 
-  Future<void> postDataMobilStatus(
-    int idMobil,
-  ) async {
+  // fungsi POST untuk update riwayat reservasi yang belum dibayar
+  Future<void> updateDataReservasi(
+      int idReservasi,
+      int idMobil,
+      String namaMobil,
+      String namaPemesan,
+      String alamat,
+      String harga,
+      String noKTP,
+      String telepon,
+      String tanggalPesanStart,
+      String tanggalPesanEnd,
+      String fotoUrl) async {
     try {
       isLoading.value = true;
-
-      String url = 'api/mobil/store/';
+      // inisiasi url API Endpoint
+      String url = 'api/updatereservasi';
       var data = {
-        'id_mobil': idMobil,
+        'id_reservasi': idReservasi,
+        'mobil_id': idMobil,
+        'nama_mobil': namaMobil,
+        'nama_pemesan': namaPemesan,
+        'gross_amount': 1,
+        'alamat': alamat,
+        'harga': harga,
+        'no_ktp': noKTP,
+        'telepon': telepon,
+        'tanggalpesan_start': tanggalPesanStart,
+        'tanggalpesan_end': tanggalPesanEnd,
+        'foto_url': fotoUrl,
+        'status': "Belum Bayar",
       };
 
       var res = await dio.post(
@@ -224,6 +259,13 @@ class APIController extends GetxController {
 
       if (res.statusCode == 200) {
         debugPrint('Pesanan terkirim ke server');
+        // dapatkan 'snap_token' dari hasil response untuk Midtrans
+        snapToken = res.data['snap_token'];
+        // simpan hasil response ke model data
+        hasilResponseDataReservasi.value =
+            DataReservasiModel.fromJson(res.data['data']);
+        // fungsi GET untuk mendapatkan data reservasi tunggal
+        getDetailReservasiSingle(hasilResponseDataReservasi.value.idReservasi!);
 
         if (kDebugMode) {
           print('SNAP TOKEN: $snapToken');
@@ -240,6 +282,43 @@ class APIController extends GetxController {
     }
   }
 
+  // fungsi POST untuk update status mobil yang terpesan
+  Future<void> postDataMobilStatus(
+    int idMobil,
+  ) async {
+    try {
+      isLoading.value = true;
+      // inisiasi url API Endpoint
+      String url = 'api/mobil/store/';
+      var data = {
+        'id_mobil': idMobil,
+      };
+
+      var res = await dio.post(
+        url,
+        data: data,
+      );
+
+      if (kDebugMode) {
+        debugPrint('hasil response: ${res.data}');
+      }
+
+      if (res.statusCode == 200) {
+        debugPrint('Ketersediaan mobil diubah');
+
+        isLoading.value = false;
+      } else {
+        // Get.snackbar('Gagal', 'Terjadi kesalahan.');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('$e');
+        // Get.snackbar('Error', 'Terjadi kesalahan.');
+      }
+    }
+  }
+
+  // fungsi POST untuk update status reservasi yang sudah dibayar
   Future<void> updateStatusReservasi(int idReservasi) async {
     try {
       isLoading.value = true;
@@ -273,16 +352,18 @@ class APIController extends GetxController {
     }
   }
 
+  // fungsi GET untuk ambil data reservasi tunggal (yang baru saja dibayar)
   Future<DataReservasiModel?> getDetailReservasiSingle(int idReservasi) async {
     try {
       isLoading.value = true;
-
+      // inisiasi url API Endpoint
       String url = 'api/reservasi/';
 
       var res = await dio.get(url);
 
       if (res.statusCode == 200) {
         log('get data pesanan single berhasil');
+        // simpan response ke variabel sebagai List
         var jsonData = res.data['data'] as List;
 
         // Seleksi data berdasarkan id_reservasi
@@ -315,6 +396,12 @@ class APIController extends GetxController {
   // inisiasi model untuk tabel users dari SQL, data tunggal untuk data user yang masuk saat ini
   var dataUserModel = UserSQLModel().obs;
 
+  // fungsi untuk menghapus data user yang tersimpan di dalam memory app
+  Future<void> clearData() async {
+    dataUserModel.value = UserSQLModel();
+  }
+
+  // fungsi POST untuk register dan update user
   Future<void> postUsers(
       {required String username,
       required String email,
@@ -326,7 +413,7 @@ class APIController extends GetxController {
       required String fotoUrl}) async {
     try {
       isLoading.value = true;
-
+      // inisiasi url API Endpoint
       String url = 'api/user/store/';
       var data = {
         "username": username,
@@ -375,7 +462,7 @@ class APIController extends GetxController {
     try {
       isLoading.value = true;
 
-      String url = 'api/user/store/';
+      String url = 'api/user/storeuserfoto';
 
       dioo.FormData formData = dioo.FormData.fromMap({
         'foto_url': await dioo.MultipartFile.fromFile(
@@ -388,7 +475,7 @@ class APIController extends GetxController {
         "email": email,
         "alamat": alamat,
         "no_ktp": noKTP,
-        "no_telp": noTelp, // Menambahkan data string lainnya
+        "no_telp": noTelp,
       });
 
       var res = await dio.post(
@@ -405,6 +492,7 @@ class APIController extends GetxController {
         Get.dialog(
           dialogAlertBtn(
             onPressed: () async {
+              Get.back();
               Get.back();
               Get.back();
             },
@@ -439,6 +527,7 @@ class APIController extends GetxController {
     }
   }
 
+  // fungsi POST untuk update profil user
   Future<void> updateUsersWithoutImage({
     required String username,
     required String email,
@@ -450,7 +539,7 @@ class APIController extends GetxController {
   }) async {
     try {
       isLoading.value = true;
-
+      // inisiasi url API Endpoint
       String url = 'api/user/store/';
       var data = {
         "username": username,
@@ -502,16 +591,18 @@ class APIController extends GetxController {
     }
   }
 
+  // fungsi GET untuk ambil data user yang aktif/login di aplikasi
   Future<UserSQLModel?> getDataUserCondition(String email) async {
     try {
       isLoading.value = true;
-
+      // inisiasi url API Endpoint
       String url = 'api/user/';
 
       var res = await dio.get(url);
 
       if (res.statusCode == 200) {
         log('get data user berhasil');
+        // simpan response ke variabel sebagai List
         var jsonData = res.data['data'] as List;
 
         // Seleksi data berdasarkan email

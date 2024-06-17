@@ -46,8 +46,8 @@ class HomeView extends GetView<HomeController> {
                   children: [
                     navBarItem2(context, PhosphorIconsLight.house, 'Beranda', 0,
                         controller.cAniDashboardUser),
-                    navBarItem2(context, PhosphorIconsLight.user, 'Riwayat', 1,
-                        controller.cAniRiwayatUser),
+                    navBarItem2(context, PhosphorIconsLight.clipboardText,
+                        'Riwayat', 1, controller.cAniRiwayatUser),
                     navBarItem2(context, PhosphorIconsLight.user, 'Profil', 2,
                         controller.cAniProfileUser),
                   ],

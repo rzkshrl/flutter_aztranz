@@ -143,54 +143,9 @@ class FormPesanMobilController extends GetxController
     }
   }
 
-  // void pesanMobil(
-  //   String idMobil,
-  //   String harga,
-  //   String namaMobil,
-  //   String namaPemesan,
-  //   String noKTPPemesan,
-  //   String noTelpPemesan,
-  //   String alamatPemesan,
-  // ) async {
-  //   try {
-  //     if (kDebugMode) {
-  //       print('Harga Mobil Total : $harga');
-  //     }
-  //     var pesananMobilReference = firestore.collection('PesananMobil');
-  //     final docRef = pesananMobilReference.doc();
-  //     await docRef.set({
-  //       'id': docRef.id,
-  //       'idMobil': idMobil,
-  //       'harga': harga,
-  //       'namaMobil': namaMobil,
-  //       'namaPemesan': namaPemesan,
-  //       'noKTPPemesan': noKTPPemesan,
-  //       'noTelpPemesan': noTelpPemesan,
-  //       'alamatPemesan': alamatPemesan,
-  //       'tanggalPesanStart': datePesanStart.value,
-  //       'tanggalPesanEnd': datePesanEnd.value,
-  //     });
-  //     // Get.defaultDialog(
-  //     //   title: "Berhasil",
-  //     //   middleText: "Pesanan berhasil dikirim.",
-  //     //   textConfirm: 'Ya',
-  //     //   onConfirm: () {
-  //     //     Get.back();
-  //     //     Get.back();
-  //     //   },
-  //     // );
-  //   } catch (e) {
-  //     if (kDebugMode) {
-  //       print(e);
-  //     }
-  //     Get.snackbar("Error", "Pesanan tidak berhasil dikirim.");
-  //   }
-  // }
-
   late final AnimationController cAniBayarSekarang;
   bool isBayarSekarangClicked = false;
 
-  // var midtransClientKey = 'SB-Mid-client-v5tvPUprZj2vnXgJ';
   var midtransSrc = 'https://app.sandbox.midtrans.com/snap/v2/';
 
   late final MidtransSDK? midtrans;
