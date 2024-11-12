@@ -128,7 +128,7 @@ class DetailRiwayatView extends GetView<DetailRiwayatController> {
                           width: 2.w,
                         ),
                         Text(
-                          'Tanggal Pesan : $dateStart - $dateEnd',
+                          'Tanggal Pesan : \n$dateStart - $dateEnd',
                           style:
                               Theme.of(context).textTheme.titleMedium!.copyWith(
                                     fontSize: 12.sp,

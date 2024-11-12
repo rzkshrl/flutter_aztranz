@@ -27,6 +27,10 @@ Future<void> simulateDelay() async {
   await Future.delayed(const Duration(milliseconds: 1500));
 }
 
+Future<void> simulateDelaySeconds() async {
+  await Future.delayed(const Duration(seconds: 2));
+}
+
 Future<void> simulateDelayShorter() async {
   await Future.delayed(const Duration(milliseconds: 750));
 }

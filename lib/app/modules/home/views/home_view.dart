@@ -18,8 +18,8 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(APIController());
-
+    var apiC = Get.put(APIController());
+    apiC.isLoading.value = true;
     return FutureBuilder(
         future: simulateDelay(),
         builder: (context, snap) {

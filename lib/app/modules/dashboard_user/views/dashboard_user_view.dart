@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../controller/auth_controller.dart';
 import '../../../data/constants/string.dart';
 import '../controllers/dashboard_user_controller.dart';
 
@@ -20,10 +20,7 @@ class DashboardUserView extends GetView<DashboardUserController> {
   Widget build(BuildContext context) {
     final c = Get.put(DashboardUserController());
     final apiC = Get.put(APIController());
-    apiC.getDataMobil();
 
-    final authC = Get.put(AuthController());
-    apiC.getDataUserCondition(authC.auth.currentUser!.email.toString());
     var data = apiC.dataUserModel.value;
 
     // menambah scrollcontroller untuk memantau scroll activity -> appbar
@@ -176,8 +173,60 @@ class DashboardUserView extends GetView<DashboardUserController> {
                   return Padding(
                     padding: EdgeInsets.only(left: 4.w, right: 4.w),
                     child: Obx(
-                      () => apiC.isLoading.value != true
-                          ? apiC.filteredDataMobil.isNotEmpty
+                      () => apiC.isLoading.value == true
+                          ? GridView.builder(
+                              shrinkWrap: true,
+                              itemCount: 6,
+                              physics: const BouncingScrollPhysics(),
+                              padding: EdgeInsets.only(bottom: 0.1.h),
+                              gridDelegate:
+                                  const SliverGridDelegateWithMaxCrossAxisExtent(
+                                      maxCrossAxisExtent: 250,
+                                      childAspectRatio: 0.60,
+                                      crossAxisSpacing: 0,
+                                      mainAxisSpacing: 0),
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 4.0, left: 4, right: 4, bottom: 4),
+                                  child: Shimmer.fromColors(
+                                    baseColor: black.withOpacity(0.2),
+                                    highlightColor: light.withOpacity(0.2),
+                                    period: const Duration(milliseconds: 1650),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: black.withOpacity(0.2),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius:
+                                                const BorderRadius.only(
+                                              topLeft: Radius.circular(20),
+                                              topRight: Radius.circular(20),
+                                            ),
+                                            child: Center(
+                                                child: Container(
+                                              decoration: BoxDecoration(
+                                                  color:
+                                                      black.withOpacity(0.2)),
+                                              width: 50.w,
+                                              height: 22.h,
+                                            )),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            )
+                          : apiC.filteredDataMobil.isNotEmpty
                               ? GridView.builder(
                                   shrinkWrap: true,
                                   itemCount: apiC.filteredDataMobil.length,
@@ -457,8 +506,7 @@ class DashboardUserView extends GetView<DashboardUserController> {
                                     );
                                   },
                                 )
-                              : dataEmptyProp()
-                          : loadingProp(),
+                              : dataEmptyProp(),
                     ),
                   );
                 },

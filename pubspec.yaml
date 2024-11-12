@@ -32,6 +32,7 @@ dependencies:
   midtrans_sdk: ^0.4.0
   permission_handler: ^11.3.0
   phosphor_flutter: ^2.0.1
+  shimmer: ^3.0.0
   sizer: ^2.0.15
   syncfusion_flutter_datepicker: 25.1.35
   webview_flutter: ^4.7.0

@@ -36,7 +36,6 @@ class APIController extends GetxController {
   // fungsi GET data tabel Mobil
   Future<void> getDataMobil() async {
     try {
-      isLoading.value = true;
       dataMobilModel.clear();
       // inisiasi url API Endpoint
       String url = 'api/mobil/';
@@ -49,15 +48,22 @@ class APIController extends GetxController {
 
       if (res.statusCode == 200) {
         // masukkan hasil response ke dalam model data
+        debugPrint('get data mobil');
+        isLoading.value = true;
+        if (kDebugMode) {
+          print(isLoading.value);
+        }
         var dataMobil = List.from(res.data['data'] as List)
             .map((e) => DataMobilModel.fromJson(e))
             .toList();
         dataMobilModel.assignAll(dataMobil);
         filteredDataMobil.assignAll(dataMobil);
-        await simulateDelayShorter();
+        await simulateDelaySeconds();
+        debugPrint('loading');
         isLoading.value = false;
-      } else {
-        // Get.snackbar('Gagal', 'Terjadi kesalahan.');
+        if (kDebugMode) {
+          print(isLoading.value);
+        }
       }
     } catch (e) {
       if (kDebugMode) {
@@ -91,7 +97,6 @@ class APIController extends GetxController {
   // fungsi GET data tabel Reservasi
   Future<void> getDataReservasi() async {
     try {
-      isLoading.value = true;
       dataMobilModel.clear();
       // inisiasi url API Endpoint
       String url = 'api/reservasi/';
@@ -104,6 +109,7 @@ class APIController extends GetxController {
 
       if (res.statusCode == 200) {
         // masukkan hasil response ke model data
+        isLoading.value = true;
         var dataReservasi = List.from(res.data['data'] as List)
             .map((e) => DataReservasiModel.fromJson(e))
             .toList();
@@ -113,7 +119,7 @@ class APIController extends GetxController {
             .sort((a, b) => b.idReservasi!.compareTo(a.idReservasi!));
         filteredDataReservasiModel
             .sort((a, b) => b.idReservasi!.compareTo(a.idReservasi!));
-        await simulateDelayShorter();
+        await simulateDelaySeconds();
         isLoading.value = false;
       } else {
         // Get.snackbar('Gagal', 'Terjadi kesalahan.');
@@ -594,7 +600,6 @@ class APIController extends GetxController {
   // fungsi GET untuk ambil data user yang aktif/login di aplikasi
   Future<UserSQLModel?> getDataUserCondition(String email) async {
     try {
-      isLoading.value = true;
       // inisiasi url API Endpoint
       String url = 'api/user/';
 
@@ -603,6 +608,7 @@ class APIController extends GetxController {
       if (res.statusCode == 200) {
         log('get data user berhasil');
         // simpan response ke variabel sebagai List
+        // isLoading.value = true;
         var jsonData = res.data['data'] as List;
 
         // Seleksi data berdasarkan email
@@ -611,7 +617,7 @@ class APIController extends GetxController {
           orElse: () => '',
         );
 
-        isLoading.value = false;
+        // isLoading.value = false;
 
         // Jika user ditemukan, konversi ke UserSQLModel
         if (userData != null) {

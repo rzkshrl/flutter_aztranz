@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../controller/api_controller.dart';
@@ -20,10 +21,7 @@ class RiwayatUserView extends GetView<RiwayatUserController> {
   Widget build(BuildContext context) {
     final c = Get.put(RiwayatUserController());
     final apiC = Get.put(APIController());
-    apiC.getDataReservasi();
 
-    final authC = Get.put(AuthController());
-    apiC.getDataUserCondition(authC.auth.currentUser!.email.toString());
     var data = apiC.dataUserModel.value;
 
     // add scrollcontroller to listen scroll activity for appbar
@@ -175,8 +173,32 @@ class RiwayatUserView extends GetView<RiwayatUserController> {
                   return Padding(
                     padding: EdgeInsets.only(left: 4.w, right: 4.w),
                     child: Obx(
-                      () => apiC.isLoading.value != true
-                          ? apiC.filteredDataReservasiModel.isNotEmpty
+                      () => apiC.isLoading.value == true
+                          ? ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: 10,
+                              physics: const BouncingScrollPhysics(),
+                              padding: EdgeInsets.only(bottom: 0.001.h),
+                              itemBuilder: (context, index) {
+                                return Shimmer.fromColors(
+                                  baseColor: black.withOpacity(0.2),
+                                  highlightColor: light.withOpacity(0.2),
+                                  period: const Duration(milliseconds: 1650),
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 4, right: 4, bottom: 2.h),
+                                    child: Container(
+                                      height: 12.5.h,
+                                      decoration: BoxDecoration(
+                                        color: black.withOpacity(0.2),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            )
+                          : apiC.filteredDataReservasiModel.isNotEmpty
                               ? ListView.builder(
                                   shrinkWrap: true,
                                   itemCount:
@@ -399,8 +421,7 @@ class RiwayatUserView extends GetView<RiwayatUserController> {
                                     );
                                   },
                                 )
-                              : dataEmptyProp()
-                          : loadingProp(),
+                              : dataEmptyProp(),
                     ),
                   );
                 },
